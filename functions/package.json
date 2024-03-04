@@ -21,7 +21,8 @@
     "firebase-admin": "^11.8.0",
     "firebase-functions": "^4.3.1",
     "prettier": "^3.2.5",
-    "twilio": "^4.23.0"
+    "twilio": "^4.23.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "eslint": "^8.15.0",

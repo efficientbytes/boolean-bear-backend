@@ -19,6 +19,8 @@ const sendOtpToPhoneNumber = require("./main/https/verification/send_otp_to_phon
 app.use("/verification/phone-number/send-otp", sendOtpToPhoneNumber);
 const verifyPhoneNumberOtp = require("./main/https/verification/verify_phone_number_otp");
 app.use("/verification/phone-number/verify-otp", verifyPhoneNumberOtp);
+const generateCustomSignInToken = require("./main/https/authentication/generate_custom_sign_in_token");
+app.use("/user/sign-in", generateCustomSignInToken);
 
 setGlobalOptions({ maxInstances: 10 });
 exports.androidnow = onRequest(app);
