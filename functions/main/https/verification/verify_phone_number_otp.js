@@ -62,7 +62,7 @@ router.post("/", async (request, response) => {
       );
 
       response.status(503).send({
-        message: `Error code ${error.code}`,
+        message: `Verification error identifier ${error.code}`,
         phoneNumber: phoneNumber,
       });
     });
