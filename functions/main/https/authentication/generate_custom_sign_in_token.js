@@ -57,7 +57,7 @@ router.post("/", async (request, response) => {
       completePhoneNumber: `+91${phoneNumber}`,
       userAccountId: userAccountId,
       profession: null,
-      linkedInAddress: null,
+      linkedInUsername: null,
       gitHubUserName: null,
       universityName: null,
       createdOn: admin.firestore.FieldValue.serverTimestamp(),

@@ -21,6 +21,19 @@ const verifyPhoneNumberOtp = require("./main/https/verification/verify_phone_num
 app.use("/verification/phone-number/verify-otp", verifyPhoneNumberOtp);
 const generateCustomSignInToken = require("./main/https/authentication/generate_custom_sign_in_token");
 app.use("/user/sign-in", generateCustomSignInToken);
+const updateUserPrivateProfileBasicDetails = require("./main/https/user_private_profile/update_user_private_profile_basic_details");
+app.use(
+  "/user/profile/update/basic-details",
+  updateUserPrivateProfileBasicDetails,
+);
+const getUserPrivateProfile = require("./main/https/user_private_profile/get_user_private_profile");
+app.use("/user/profile", getUserPrivateProfile);
+const updateUserPrivateProfile = require("./main/https/user_private_profile/update_user_private_profile");
+app.use("/user/profile/update", updateUserPrivateProfile);
 
 setGlobalOptions({ maxInstances: 10 });
 exports.androidnow = onRequest(app);
+
+//database triggers
+const onUserProfileUpdated = require("./main/triggers/on_user_profile_updated");
+exports.onUserProfileUpdated = onUserProfileUpdated;
