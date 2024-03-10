@@ -5,6 +5,7 @@ const cors = require("cors");
 const { setGlobalOptions } = require("firebase-functions/v2");
 const express = require("express");
 const app = express();
+app.use(cors({ origin: true }));
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
