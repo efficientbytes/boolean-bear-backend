@@ -2,7 +2,7 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const { onDocumentUpdated } = require("firebase-functions/v2/firestore");
 // @ts-ignore
-const { setGlobalOptions, firestore } = require("firebase-functions/v2");
+const { setGlobalOptions } = require("firebase-functions/v2");
 
 setGlobalOptions({ maxInstances: 10 });
 exports.onUserProfileUpdated = onDocumentUpdated(

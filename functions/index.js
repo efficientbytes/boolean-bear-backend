@@ -2,7 +2,6 @@ const admin = require("firebase-admin");
 const serviceAccount = require("./service_account_key.json");
 const { onRequest } = require("firebase-functions/v2/https");
 const cors = require("cors");
-const logger = require("firebase-functions/logger");
 const { setGlobalOptions } = require("firebase-functions/v2");
 const express = require("express");
 const app = express();
