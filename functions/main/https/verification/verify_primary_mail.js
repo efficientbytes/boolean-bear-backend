@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
-const { v4: uuidv4 } = require("uuid");
 
 function generateHtml(title, caption) {
   const htmlContent = `
