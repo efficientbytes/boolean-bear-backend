@@ -30,6 +30,13 @@ const getUserPrivateProfile = require("./main/https/user_private_profile/get_use
 app.use("/user/profile", getUserPrivateProfile);
 const updateUserPrivateProfile = require("./main/https/user_private_profile/update_user_private_profile");
 app.use("/user/profile/update", updateUserPrivateProfile);
+const sendVerificationLinkToPrimaryMail = require("./main/https/verification/send_verification_link_to_primary_mail");
+app.use(
+  "/verification/primary-mail/send-verification-link",
+  sendVerificationLinkToPrimaryMail,
+);
+const verifyPrimaryMail = require("./main/https/verification/verify_primary_mail");
+app.use("/verification/primary-mail/verify-link", verifyPrimaryMail);
 
 setGlobalOptions({ maxInstances: 10 });
 exports.androidnow = onRequest(app);

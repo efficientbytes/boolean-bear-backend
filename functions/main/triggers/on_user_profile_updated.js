@@ -45,5 +45,55 @@ exports.onUserProfileUpdated = onDocumentUpdated(
           });
         });
     }
+
+    if (
+      afterUpdateData.emailAddress != null &&
+      beforeUpdateData.emailAddress != null &&
+      afterUpdateData.emailAddress !== beforeUpdateData.emailAddress
+    ) {
+      const userAccountId = event.data.after.id;
+      const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/${userAccountId}`;
+      await admin.firestore().doc(userProfilePath).update({
+        lastUpdatedOn: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      const primaryMailVerificationKeyPath = `/VERIFICATION/PRIMARY_MAIL/FILES/`;
+      const primaryVerificationQuery = admin
+        .firestore()
+        .collection(primaryMailVerificationKeyPath)
+        .where("userAccountId", "==", userAccountId);
+
+      const primaryVerificationQueryResult =
+        await primaryVerificationQuery.get();
+
+      if (!primaryVerificationQueryResult.empty) {
+        logger.log(
+          `log||there are ${primaryVerificationQueryResult.size} verification credentials request created for user with user account id ${userAccountId}`,
+        );
+        logger.log(`log||deleting verification credentials...`);
+        for (const snapshot of primaryVerificationQueryResult.docs) {
+          const snapshotId = snapshot.id;
+          try {
+            const primaryMailVerificationKeyPath = `/VERIFICATION/PRIMARY_MAIL/FILES/${snapshotId}`;
+            const primaryMailVerificationRef = admin
+              .firestore()
+              .doc(primaryMailVerificationKeyPath);
+            await primaryMailVerificationRef.delete();
+          } catch (error) {
+            logger.error(
+              `log||failed to delete document id ${snapshotId}. Error ${error.message}`,
+            );
+          }
+        }
+        logger.log(
+          `log||verification credentials deletion completed for user with user account id ${userAccountId}`,
+        );
+        const updatedQueryResult = await primaryVerificationQuery.get();
+        const updatedSize = updatedQueryResult.size;
+        logger.log(
+          `log||verification credentials deletion completed for user with user account id ${userAccountId}. Documents present after deletion ${updatedSize}`,
+        );
+      }
+    }
   },
 );
