@@ -3,7 +3,6 @@ const router = express.Router();
 const logger = require("firebase-functions/logger");
 const { v4: uuidv4 } = require("uuid");
 const admin = require("firebase-admin");
-const { user } = require("firebase-functions/v1/auth");
 router.post("/", async (request, response) => {
   logger.log(`http||generate-custom-sign-in-token`);
 
