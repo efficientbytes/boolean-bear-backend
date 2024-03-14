@@ -14,16 +14,17 @@ router.post("/", async (request, response) => {
     basicProfileDetailsUpdated: false,
     message: null,
     userAccountId: null,
+    singleDeviceLogin: null,
   };
 
   if (phoneNumber == null) {
+    //phone number is not provided
     logger.error(`log||phone number is null`);
 
     responseBody.token = null;
     responseBody.basicProfileDetailsUpdated = false;
     responseBody.message = `Phone number is not provided`;
     responseBody.userAccountId = null;
-
     response.status(400).send(responseBody);
   }
 
@@ -69,17 +70,68 @@ router.post("/", async (request, response) => {
     await userProfileRef
       .create(userProfileData)
       .then(() => admin.auth().createCustomToken(userAccountId))
-      .then((customToken) => {
+      .then(async (customToken) => {
         logger.log(
           `log||user phone number is ${phoneNumber} and user id is ${userAccountId}. sign in token is generated successfully.`,
         );
 
         responseBody.token = customToken;
         responseBody.basicProfileDetailsUpdated = false;
-        responseBody.message = "Signing in new user";
-
         responseBody.userAccountId = userAccountId;
 
+        //create a single device login document
+        const deviceId = `DID${uuidv4()}`;
+
+        const singleDeviceLogin = {
+          deviceId: deviceId,
+          createdOn: admin.firestore.FieldValue.serverTimestamp(),
+        };
+
+        const singleDeviceLoginPath = `/SINGLE_DEVICE_LOGIN/${userAccountId}`;
+        const singleDeviceLoginRef = admin
+          .firestore()
+          .doc(singleDeviceLoginPath);
+
+        //upload the document
+        const result = await singleDeviceLoginRef
+          .set(singleDeviceLogin)
+          .then((result) => {
+            return true;
+          })
+          .catch((error) => {
+            //failed to upload the document
+            responseBody.message = error.message;
+            return false;
+          });
+
+        if (result !== true) {
+          //failed to upload the document
+          logger.error(
+            `log||could not register single device login id for user with user account id ${userAccountId} and phone number ${phoneNumber}`,
+          );
+          responseBody.singleDeviceLogin = null;
+          response.status(400).send(responseBody);
+        }
+
+        const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
+
+        if (!singleDeviceLoginSnapshot.exists) {
+          //document does not exists
+          logger.error(
+            `log||single device login id document does not exists for user with user account id ${userAccountId} and phone number ${phoneNumber}`,
+          );
+          responseBody.singleDeviceLogin = null;
+          responseBody.message = `Could not find device login records`;
+          response.status(400).send(responseBody);
+        }
+        const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
+
+        responseBody.singleDeviceLogin = {
+          deviceId: singleDeviceLoginData.deviceId,
+          createdOn: singleDeviceLoginData.createdOn._seconds,
+        };
+
+        responseBody.message = "Signing in new user";
         response.status(200).send(responseBody);
       });
   } else {
@@ -96,7 +148,6 @@ router.post("/", async (request, response) => {
       responseBody.basicProfileDetailsUpdated = null;
       responseBody.message = "User record not found";
       responseBody.userAccountId = null;
-
       response.status(400).send(responseBody);
     }
 
@@ -122,13 +173,64 @@ router.post("/", async (request, response) => {
       responseBody.basicProfileDetailsUpdated = true;
     }
 
+    responseBody.userAccountId = userAccountId;
     responseBody.token = await admin.auth().createCustomToken(userAccountId);
+    responseBody.message = `Sign in token generated successfully`;
     logger.log(
       `log||user phone number is ${phoneNumber} and user id is ${userAccountId}. Sign in token is generated successfully.`,
     );
-    responseBody.message = `Sign in token generated successfully`;
-    responseBody.userAccountId = userAccountId;
 
+    //create a single device login document
+    const deviceId = `DID${uuidv4()}`;
+
+    const singleDeviceLogin = {
+      deviceId: deviceId,
+      createdOn: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    const singleDeviceLoginPath = `/SINGLE_DEVICE_LOGIN/${userAccountId}`;
+    const singleDeviceLoginRef = admin.firestore().doc(singleDeviceLoginPath);
+
+    //upload the document
+    const result = await singleDeviceLoginRef
+      .set(singleDeviceLogin)
+      .then((result) => {
+        return true;
+      })
+      .catch((error) => {
+        //failed to upload the document
+        responseBody.message = error.message;
+        return false;
+      });
+
+    if (result !== true) {
+      //failed to upload the document
+      logger.error(
+        `log||could not register single device login id for user with user account id ${userAccountId} and phone number ${phoneNumber}`,
+      );
+      responseBody.singleDeviceLogin = null;
+      response.status(400).send(responseBody);
+    }
+
+    const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
+
+    if (!singleDeviceLoginSnapshot.exists) {
+      //document does not exists
+      logger.error(
+        `log||single device login id document does not exists for user with user account id ${userAccountId} and phone number ${phoneNumber}`,
+      );
+      responseBody.singleDeviceLogin = null;
+      responseBody.message = `Could not find device login records`;
+      response.status(400).send(responseBody);
+    }
+    const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
+
+    responseBody.singleDeviceLogin = {
+      deviceId: singleDeviceLoginData.deviceId,
+      createdOn: singleDeviceLoginData.createdOn._seconds,
+    };
+
+    responseBody.message = "Signing in new user";
     response.status(200).send(responseBody);
   }
 });
