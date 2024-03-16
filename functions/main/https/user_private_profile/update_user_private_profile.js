@@ -91,7 +91,6 @@ router.post("/", async (request, response) => {
     completePhoneNumber: userProfile.completePhoneNumber,
     userAccountId: userProfile.userAccountId,
     activityId: userProfile.activityId,
-    fcmToken: userProfile.fcmToken,
     profession: userProfile.profession,
     linkedInUsername: userProfile.linkedInUsername,
     gitHubUsername: userProfile.gitHubUsername,

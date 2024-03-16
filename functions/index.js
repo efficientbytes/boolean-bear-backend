@@ -39,6 +39,8 @@ const verifyPrimaryMail = require("./main/https/verification/verify_primary_mail
 app.use("/verification/primary-mail/verify-link", verifyPrimaryMail);
 const getSingleDeviceLogin = require("./main/https/authentication/get_single_device_login");
 app.use("/user/single-device-login", getSingleDeviceLogin);
+const getProfessionAdapterList = require("./main/https/utility/get_profession_adapter_list");
+app.use("/utility/professions", getProfessionAdapterList);
 
 setGlobalOptions({ maxInstances: 10 });
 exports.androidnow = onRequest(app);
