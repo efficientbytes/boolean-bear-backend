@@ -41,6 +41,8 @@ const getSingleDeviceLogin = require("./main/https/authentication/get_single_dev
 app.use("/user/single-device-login", getSingleDeviceLogin);
 const getProfessionAdapterList = require("./main/https/utility/get_profession_adapter_list");
 app.use("/utility/professions", getProfessionAdapterList);
+const postFeedback = require("./main/https/feedback_n_support/post_feedback");
+app.use("/app/feedback", postFeedback);
 
 setGlobalOptions({ maxInstances: 10 });
 exports.androidnow = onRequest(app);
