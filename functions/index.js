@@ -43,6 +43,8 @@ const getProfessionAdapterList = require("./main/https/utility/get_profession_ad
 app.use("/utility/professions", getProfessionAdapterList);
 const postFeedback = require("./main/https/feedback_n_support/post_feedback");
 app.use("/app/feedback", postFeedback);
+const getIssueCategoryAdapterList = require("./main/https/utility/get_issue_category_adapter_list");
+app.use("/utility/issue-categories", getIssueCategoryAdapterList);
 
 setGlobalOptions({ maxInstances: 10 });
 exports.androidnow = onRequest(app);
