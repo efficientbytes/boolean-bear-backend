@@ -7,10 +7,12 @@ const express = require("express");
 const app = express();
 app.use(cors({ origin: true }));
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  projectId: "android-now-14",
-});
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    projectId: "android-now-14",
+  });
+}
 
 //http functions
 const welcome = require("./main/https/landing/welcome");
@@ -45,6 +47,8 @@ const postFeedback = require("./main/https/feedback_n_support/post_feedback");
 app.use("/app/feedback", postFeedback);
 const getIssueCategoryAdapterList = require("./main/https/utility/get_issue_category_adapter_list");
 app.use("/utility/issue-categories", getIssueCategoryAdapterList);
+const requestSupport = require("./main/https/feedback_n_support/request_support");
+app.use("/app/contact-support", requestSupport);
 
 setGlobalOptions({ maxInstances: 10 });
 exports.androidnow = onRequest(app);
