@@ -28,6 +28,7 @@ router.post("/", async (request, response) => {
 
     responseBody.message = `User account id is not provided.`;
     response.status(400).send(responseBody);
+    return;
   }
 
   if (emailAddress == null) {
@@ -35,6 +36,7 @@ router.post("/", async (request, response) => {
 
     responseBody.message = `Email address is not provided.`;
     response.status(400).send(responseBody);
+    return;
   }
 
   if (firstName == null) {
@@ -42,6 +44,7 @@ router.post("/", async (request, response) => {
 
     responseBody.message = `First name is not provided.`;
     response.status(400).send(responseBody);
+    return;
   }
 
   //check if user id is registered
@@ -62,6 +65,7 @@ router.post("/", async (request, response) => {
 
   if (userIdCheck !== true) {
     response.status(401).send(responseBody);
+    return;
   }
 
   //check how many times the verification was requested by this user for this particular mail address (if more than 5 don't send any new verification)
@@ -81,6 +85,7 @@ router.post("/", async (request, response) => {
 
     responseBody.message = `Verification limit for ${emailAddress} has exceeded. Try a different email address.`;
     response.status(400).send(responseBody);
+    return;
   }
 
   const verificationId = uuidv4();

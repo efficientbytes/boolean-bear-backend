@@ -76,6 +76,7 @@ router.get("/", async (request, response) => {
     responseBody.caption = `Verification key is not provided.`;
     const htmlContent = generateHtml(responseBody.title, responseBody.caption);
     response.status(400).send(htmlContent);
+    return;
   }
 
   if (userAccountId == null) {
@@ -85,6 +86,7 @@ router.get("/", async (request, response) => {
     responseBody.caption = `User account id is not provided.`;
     const htmlContent = generateHtml(responseBody.title, responseBody.caption);
     response.status(400).send(htmlContent);
+    return;
   }
 
   if (emailAddress == null) {
@@ -94,6 +96,7 @@ router.get("/", async (request, response) => {
     responseBody.caption = `Email address is not provided.`;
     const htmlContent = generateHtml(responseBody.title, responseBody.caption);
     response.status(400).send(htmlContent);
+    return;
   }
 
   //check if the user id is authenticated
@@ -116,6 +119,7 @@ router.get("/", async (request, response) => {
   if (userIdCheck !== true) {
     const htmlContent = generateHtml(responseBody.title, responseBody.caption);
     response.status(401).send(htmlContent);
+    return;
   }
 
   const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/${userAccountId}`;
@@ -131,6 +135,7 @@ router.get("/", async (request, response) => {
     responseBody.caption = `User record doest not exists.`;
     const htmlContent = generateHtml(responseBody.title, responseBody.caption);
     response.status(400).send(htmlContent);
+    return;
   }
 
   //check if the emailId in the mail is same as the email id in the verification document
@@ -152,6 +157,7 @@ router.get("/", async (request, response) => {
     responseBody.caption = `Verification credentials has either been used,expired or not valid.`;
     const htmlContent = generateHtml(responseBody.title, responseBody.caption);
     response.status(400).send(htmlContent);
+    return;
   }
 
   const primaryMailVerificationData = primaryMailVerificationSnapshot.data();
@@ -174,6 +180,7 @@ router.get("/", async (request, response) => {
     responseBody.caption = `Incorrect verification credentials.`;
     const htmlContent = generateHtml(responseBody.title, responseBody.caption);
     response.status(500).send(htmlContent);
+    return;
   }
 
   const updateResult = await userProfilePathRef
@@ -198,6 +205,7 @@ router.get("/", async (request, response) => {
   if (updateResult !== true) {
     const htmlContent = generateHtml(responseBody.title, responseBody.caption);
     response.status(500).send(htmlContent);
+    return;
   }
 
   const customClaim = {

@@ -27,6 +27,7 @@ router.post("/", async (request, response) => {
       "User account id could not be found. Try signing in again.";
     responseBody.signOut = true;
     response.status(404).send(responseBody);
+    return;
   }
 
   if (firstName == null || emailAddress == null) {
@@ -38,6 +39,7 @@ router.post("/", async (request, response) => {
     responseBody.message = "First name or Email address is not provided.";
     responseBody.signOut = false;
     response.status(404).send(responseBody);
+    return;
   }
 
   const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/${userAccountId}`;
@@ -54,6 +56,7 @@ router.post("/", async (request, response) => {
     responseBody.message = "User profile does not exists.";
     responseBody.signOut = true;
     response.status(404).send(responseBody);
+    return;
   }
 
   // user profile exits, so update the fields
