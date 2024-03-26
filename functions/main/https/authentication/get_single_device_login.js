@@ -23,6 +23,7 @@ router.get("/", async (request, response) => {
     responseBody.message =
       "User account id could not be found. Try signing in again.";
     response.status(404).send(responseBody);
+    return;
   }
 
   const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/${userAccountId}`;
@@ -39,6 +40,7 @@ router.get("/", async (request, response) => {
     responseBody.createdOn = null;
     responseBody.message = "User profile does not exists.";
     response.status(404).send(responseBody);
+    return;
   }
 
   // user profile exits, so return the data associated with it
@@ -57,6 +59,7 @@ router.get("/", async (request, response) => {
     responseBody.createdOn = null;
     responseBody.message = `Could not find device login records`;
     response.status(400).send(responseBody);
+    return;
   }
   const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
 

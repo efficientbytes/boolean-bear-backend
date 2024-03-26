@@ -22,6 +22,7 @@ router.get("/", async (request, response) => {
       "User account id could not be found. Try signing in again.";
     responseBody.signOut = false;
     response.status(404).send(responseBody);
+    return;
   }
 
   const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/${userAccountId}`;
@@ -38,6 +39,7 @@ router.get("/", async (request, response) => {
     responseBody.message = "User profile does not exists.";
     responseBody.signOut = false;
     response.status(404).send(responseBody);
+    return;
   }
 
   // user profile exits, so return the data associated with it

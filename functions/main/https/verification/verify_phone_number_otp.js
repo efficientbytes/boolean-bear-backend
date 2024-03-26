@@ -21,6 +21,7 @@ router.post("/", async (request, response) => {
       message: `Phone number is not provided`,
       phoneNumber: phoneNumber,
     });
+    return;
   }
 
   if (otp == null) {
@@ -30,6 +31,7 @@ router.post("/", async (request, response) => {
       message: `OTP is not provided`,
       phoneNumber: phoneNumber,
     });
+    return;
   }
   ``;
   twilio.verify.v2

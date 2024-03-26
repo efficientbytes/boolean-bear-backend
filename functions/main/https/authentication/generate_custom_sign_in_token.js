@@ -26,6 +26,7 @@ router.post("/", async (request, response) => {
     responseBody.message = `Phone number is not provided`;
     responseBody.userAccountId = null;
     response.status(400).send(responseBody);
+    return;
   }
 
   const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/`;
@@ -111,6 +112,7 @@ router.post("/", async (request, response) => {
           );
           responseBody.singleDeviceLogin = null;
           response.status(400).send(responseBody);
+          return;
         }
 
         const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
@@ -123,6 +125,7 @@ router.post("/", async (request, response) => {
           responseBody.singleDeviceLogin = null;
           responseBody.message = `Could not find device login records`;
           response.status(400).send(responseBody);
+          return;
         }
         const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
 
@@ -149,6 +152,7 @@ router.post("/", async (request, response) => {
       responseBody.message = "User record not found";
       responseBody.userAccountId = null;
       response.status(400).send(responseBody);
+      return;
     }
 
     const userProfile = snapshot.data();
@@ -210,6 +214,7 @@ router.post("/", async (request, response) => {
       );
       responseBody.singleDeviceLogin = null;
       response.status(400).send(responseBody);
+      return;
     }
 
     const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
@@ -222,6 +227,7 @@ router.post("/", async (request, response) => {
       responseBody.singleDeviceLogin = null;
       responseBody.message = `Could not find device login records`;
       response.status(400).send(responseBody);
+      return;
     }
     const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
 

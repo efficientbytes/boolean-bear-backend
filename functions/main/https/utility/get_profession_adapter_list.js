@@ -19,6 +19,7 @@ router.get("/", async (request, response) => {
 
     logger.error(`log||profession adapter list data is empty in database.`);
     response.status(500).send(responseBody);
+    return;
   }
 
   await professionAdapterListSnapshot.forEach((snapshot) => {
