@@ -49,6 +49,8 @@ const getIssueCategoryAdapterList = require("./main/https/utility/get_issue_cate
 app.use("/utility/issue-categories", getIssueCategoryAdapterList);
 const requestSupport = require("./main/https/feedback_n_support/request_support");
 app.use("/app/contact-support", requestSupport);
+const deleteUserProfile = require("./main/https/authentication/delete_user_account");
+app.use("/user/delete-account", deleteUserProfile);
 
 setGlobalOptions({ maxInstances: 10 });
 exports.androidnow = onRequest(app);
@@ -56,3 +58,5 @@ exports.androidnow = onRequest(app);
 //database triggers
 const onUserProfileUpdated = require("./main/triggers/on_user_profile_updated");
 exports.onUserProfileUpdated = onUserProfileUpdated;
+const onUserProfileDeleted = require("./main/triggers/on_user_profile_deleted");
+exports.onUserProfileDeleted = onUserProfileDeleted;
