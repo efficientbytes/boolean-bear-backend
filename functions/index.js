@@ -1,17 +1,17 @@
 const admin = require("firebase-admin");
 const serviceAccount = require("./service_account_key.json");
-const { onRequest } = require("firebase-functions/v2/https");
+const {onRequest} = require("firebase-functions/v2/https");
 const cors = require("cors");
-const { setGlobalOptions } = require("firebase-functions/v2");
+const {setGlobalOptions} = require("firebase-functions/v2");
 const express = require("express");
 const app = express();
-app.use(cors({ origin: true }));
+app.use(cors({origin: true}));
 
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    projectId: "android-now-14",
-  });
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        projectId: "boolean-bear",
+    });
 }
 
 //http functions
@@ -25,8 +25,8 @@ const generateCustomSignInToken = require("./main/https/authentication/generate_
 app.use("/user/sign-in", generateCustomSignInToken);
 const updateUserPrivateProfileBasicDetails = require("./main/https/user_private_profile/update_user_private_profile_basic_details");
 app.use(
-  "/user/profile/update/basic-details",
-  updateUserPrivateProfileBasicDetails,
+    "/user/profile/update/basic-details",
+    updateUserPrivateProfileBasicDetails,
 );
 const getUserPrivateProfile = require("./main/https/user_private_profile/get_user_private_profile");
 app.use("/user/profile", getUserPrivateProfile);
@@ -34,8 +34,8 @@ const updateUserPrivateProfile = require("./main/https/user_private_profile/upda
 app.use("/user/profile/update", updateUserPrivateProfile);
 const sendVerificationLinkToPrimaryMail = require("./main/https/verification/send_verification_link_to_primary_mail");
 app.use(
-  "/verification/primary-mail/send-verification-link",
-  sendVerificationLinkToPrimaryMail,
+    "/verification/primary-mail/send-verification-link",
+    sendVerificationLinkToPrimaryMail,
 );
 const verifyPrimaryMail = require("./main/https/verification/verify_primary_mail");
 app.use("/verification/primary-mail/verify-link", verifyPrimaryMail);
@@ -52,8 +52,8 @@ app.use("/app/contact-support", requestSupport);
 const deleteUserProfile = require("./main/https/authentication/delete_user_account");
 app.use("/user/delete-account", deleteUserProfile);
 
-setGlobalOptions({ maxInstances: 10 });
-exports.androidnow = onRequest(app);
+setGlobalOptions({maxInstances: 10});
+exports.booleanbear = onRequest(app);
 
 //database triggers
 const onUserProfileUpdated = require("./main/triggers/on_user_profile_updated");
