@@ -51,6 +51,10 @@ const requestSupport = require("./main/https/feedback_n_support/request_support"
 app.use("/app/contact-support", requestSupport);
 const deleteUserProfile = require("./main/https/authentication/delete_user_account");
 app.use("/user/delete-account", deleteUserProfile);
+const createContentCategories = require("./main/https/content-categories/create_content_categories");
+app.use("/admin/upload-content-categories", createContentCategories);
+const getContentCategories = require("./main/https/content-categories/get_content_categories");
+app.use("/content/categories", getContentCategories);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
