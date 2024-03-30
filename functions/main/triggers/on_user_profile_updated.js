@@ -8,10 +8,12 @@ setGlobalOptions({maxInstances: 10});
 exports.onUserProfileUpdated = onDocumentUpdated(
     "/USER/PRIVATE_PROFILE/FILES/{userAccountId}",
     async (event) => {
+
         logger.log(`trigger onUpdate||on-user-profile-updated.`);
         const userProfileSnapshot = event.data;
         if (userProfileSnapshot == null) {
             logger.error(`log||no data associated with the event.`);
+            return;
         }
 
         const afterUpdateSnapshot = userProfileSnapshot.after;
@@ -46,15 +48,12 @@ exports.onUserProfileUpdated = onDocumentUpdated(
                 });
         }
 
-        const currentEmailVerifiedOn = afterUpdateData.emailVerifiedOn;
-        const previousEmailVerifiedOn = beforeUpdateData.emailVerifiedOn;
+        const currentEmailVerifiedOn = afterUpdateData.emailVerifiedOn._nanoseconds;
+        const previousEmailVerifiedOn = beforeUpdateData.emailVerifiedOn._nanoseconds;
 
         if (currentEmailVerifiedOn != null && currentEmailVerifiedOn !== previousEmailVerifiedOn) {
+
             const userAccountId = event.data.after.id;
-            const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/${userAccountId}`;
-            await admin.firestore().doc(userProfilePath).update({
-                lastUpdatedOn: admin.firestore.FieldValue.serverTimestamp(),
-            });
 
             const primaryMailVerificationKeyPath = `/VERIFICATION/PRIMARY_MAIL/FILES/`;
             const primaryVerificationQuery = admin
@@ -93,6 +92,7 @@ exports.onUserProfileUpdated = onDocumentUpdated(
                     `log||verification credentials deletion completed for user with user account id ${userAccountId}. Documents present after deletion ${updatedSize}`,
                 );
             }
+            return;
         }
 
     },

@@ -182,11 +182,12 @@ router.get("/", async (request, response) => {
         response.status(500).send(htmlContent);
         return;
     }
-
+    const time = admin.firestore.FieldValue.serverTimestamp();
     const updateResult = await userProfilePathRef
         .update({
             emailAddress: emailAddress,
-            emailVerifiedOn: admin.firestore.FieldValue.serverTimestamp(),
+            emailVerifiedOn: time,
+            lastUpdatedOn: time,
         })
         .then(() => {
             logger.log(

@@ -58,7 +58,7 @@ router.post("/", async (request, response) => {
             phoneNumberPrefix: "+91",
             completePhoneNumber: `+91${phoneNumber}`,
             userAccountId: userAccountId,
-            profession: null,
+            profession: 0,
             linkedInUsername: null,
             gitHubUserName: null,
             universityName: null,
