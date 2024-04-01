@@ -56,7 +56,9 @@ app.use("/admin/upload-content-categories", createContentCategories);
 const getContentCategories = require("./main/https/content-categories/get_content_categories");
 app.use("/content/categories", getContentCategories);
 const uploadVideo = require("./main/https/videos/upload_video");
-app.use("/admin/upload-video", uploadVideo);
+app.use("/admin/video/upload", uploadVideo);
+const uploadContent = require("./main/https/contents/upload_contents");
+app.use("/admin/content/upload", uploadContent);
 
 
 setGlobalOptions({maxInstances: 10});
