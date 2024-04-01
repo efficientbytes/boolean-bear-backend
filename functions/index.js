@@ -59,6 +59,8 @@ const uploadVideo = require("./main/https/videos/upload_video");
 app.use("/admin/video/upload", uploadVideo);
 const uploadContent = require("./main/https/contents/upload_contents");
 app.use("/admin/content/upload", uploadContent);
+const uploadInstructorProfile = require("./main/https/instructor/upload_instructor_profile");
+app.use("/admin/instructor/upload-profile", uploadInstructorProfile);
 
 
 setGlobalOptions({maxInstances: 10});
