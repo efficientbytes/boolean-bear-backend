@@ -55,6 +55,9 @@ const createContentCategories = require("./main/https/content-categories/create_
 app.use("/admin/upload-content-categories", createContentCategories);
 const getContentCategories = require("./main/https/content-categories/get_content_categories");
 app.use("/content/categories", getContentCategories);
+const uploadVideo = require("./main/https/videos/upload_video");
+app.use("/admin/upload-video", uploadVideo);
+
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
