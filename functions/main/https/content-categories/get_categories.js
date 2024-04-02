@@ -2,11 +2,11 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
-router.get("/:type", async (request, response) => {
+router.get("/", async (request, response) => {
     logger.log(`http||get-content-categories.`);
 
 
-    const type = request.params.type || "shuffled";
+    const type = request.query.type || "shuffled";
 
     const responseBody = {
         message: null,

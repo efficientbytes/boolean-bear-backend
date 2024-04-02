@@ -53,14 +53,18 @@ const deleteUserProfile = require("./main/https/authentication/delete_user_accou
 app.use("/user/delete-account", deleteUserProfile);
 const createContentCategories = require("./main/https/content-categories/create_content_categories");
 app.use("/admin/contents/categories/upload", createContentCategories);
-const getContentCategories = require("./main/https/content-categories/get_content_categories");
-app.use("/contents/categories", getContentCategories);
+const getCategories = require("./main/https/content-categories/get_categories");
+app.use("/categories", getCategories);
 const uploadVideo = require("./main/https/videos/upload_video");
 app.use("/admin/video/upload", uploadVideo);
 const uploadContent = require("./main/https/contents/upload_contents");
 app.use("/admin/content/upload", uploadContent);
 const uploadInstructorProfile = require("./main/https/instructor/upload_instructor_profile");
 app.use("/admin/instructor/upload-profile", uploadInstructorProfile);
+const getShuffledContentIds = require("./main/https/contents/get_shuffled_content_ids");
+app.use("/categories/shuffled", getShuffledContentIds);
+const getContent = require("./main/https/contents/get_content");
+app.use("/contents", getContent);
 
 
 setGlobalOptions({maxInstances: 10});
