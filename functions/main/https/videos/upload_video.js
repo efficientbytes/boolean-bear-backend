@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/", async (request, response) => {
     logger.log(`http||post-video.`);
 
-    const videoId = uuidv4();
+    const videoId = request.body.videoId || uuidv4();
     const videoSize = request.body.videoSize || null;
     const runTime = request.body.runTime || null;
     const downloadable = request.body.downloadable || false;
