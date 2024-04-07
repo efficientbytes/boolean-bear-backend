@@ -5,7 +5,6 @@ const router = express.Router();
 router.get("/", async (request, response) => {
     logger.log(`http||get-content-categories.`);
 
-
     const type = request.query.type || "shuffled";
 
     const responseBody = {
