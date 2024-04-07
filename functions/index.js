@@ -65,6 +65,8 @@ const getShuffledContentIds = require("./main/https/contents/get_shuffled_conten
 app.use("/categories/shuffled", getShuffledContentIds);
 const getContent = require("./main/https/contents/get_content");
 app.use("/contents", getContent);
+const getContentPlayUrl = require("./main/https/contents/get_content_play_url");
+app.use("/contents", getContentPlayUrl);
 
 
 setGlobalOptions({maxInstances: 10});
