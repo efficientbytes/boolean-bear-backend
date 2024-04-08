@@ -62,7 +62,7 @@ router.post("/", async (request, response) => {
         title: title,
         description: description,
         createdOn: time,
-        uploadedOn: time,
+        updatedOn: time,
         showAds: showAds,
         adTag: adTag,
         searchTags: searchTags
