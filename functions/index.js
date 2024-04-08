@@ -67,6 +67,8 @@ const getContent = require("./main/https/contents/get_content");
 app.use("/contents", getContent);
 const getContentPlayUrl = require("./main/https/contents/get_content_play_url");
 app.use("/contents", getContentPlayUrl);
+const getContentDetails = require("./main/https/contents/get_content_details");
+app.use("/contents", getContentDetails);
 
 
 setGlobalOptions({maxInstances: 10});
