@@ -69,6 +69,8 @@ const getContentPlayUrl = require("./main/https/contents/get_content_play_url");
 app.use("/contents", getContentPlayUrl);
 const getContentDetails = require("./main/https/contents/get_content_details");
 app.use("/contents", getContentDetails);
+const recordUserStartingScreenTime = require("./main/https/statistics/collect-screen-time-start-point");
+app.use("/statistics/screen-timing/app", recordUserStartingScreenTime);
 
 
 setGlobalOptions({maxInstances: 10});
