@@ -79,6 +79,10 @@ const increaseContentViews = require("./main/https/statistics/increase-content-v
 app.use("/statistics/content-views/app", increaseContentViews);
 const appLinks = require("./main/https/app-link/app-link-verifications");
 app.use("/.well-known/assetlinks.json", appLinks);
+const uploadHomePageBanner = require("./main/https/banners/upload_home_page_banner");
+app.use("/admin/ads/banner/home-page/upload", uploadHomePageBanner);
+const getHomePageBanners = require("./main/https/banners/get_home_page_banners");
+app.use("/ads/banners/home-page", getHomePageBanners);
 
 
 setGlobalOptions({maxInstances: 10});
