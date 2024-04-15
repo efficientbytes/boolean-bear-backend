@@ -73,6 +73,8 @@ const recordUserStartingScreenTime = require("./main/https/statistics/collect-sc
 app.use("/statistics/screen-timing/app", recordUserStartingScreenTime);
 const getInstructorProfile = require("./main/https/instructor/get_instructor_profile");
 app.use("/instructors/profile", getInstructorProfile);
+const getMentionedLink = require("./main/https/links/get_mentioned_link");
+app.use("/mentioned-links", getMentionedLink);
 
 
 setGlobalOptions({maxInstances: 10});
