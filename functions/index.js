@@ -71,6 +71,8 @@ const getContentDetails = require("./main/https/contents/get_content_details");
 app.use("/contents", getContentDetails);
 const recordUserStartingScreenTime = require("./main/https/statistics/collect-screen-time-start-point");
 app.use("/statistics/screen-timing/app", recordUserStartingScreenTime);
+const getInstructorProfile = require("./main/https/instructor/get_instructor_profile");
+app.use("/instructors/profile", getInstructorProfile);
 
 
 setGlobalOptions({maxInstances: 10});
