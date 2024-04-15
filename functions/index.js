@@ -75,6 +75,8 @@ const getInstructorProfile = require("./main/https/instructor/get_instructor_pro
 app.use("/instructors/profile", getInstructorProfile);
 const getMentionedLink = require("./main/https/links/get_mentioned_link");
 app.use("/mentioned-links", getMentionedLink);
+const increaseContentViews = require("./main/https/statistics/increase-content-views");
+app.use("/statistics/content-views/app", increaseContentViews);
 
 
 setGlobalOptions({maxInstances: 10});

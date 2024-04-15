@@ -23,6 +23,8 @@ router.get("/:contentId/play-details", async (request, response) => {
         instructorLastName: null,
         instructorProfilePic: null,
         nextSuggestion: null,
+        hashTags: null,
+        mentionedLinkIds: null,
         message: null
     }
 
@@ -42,7 +44,7 @@ router.get("/:contentId/play-details", async (request, response) => {
 
         responseBody.message = `${contentId} content does not exists.`;
 
-        response.status(400).send(responseBody);
+        response.status(404).send(responseBody);
         return;
     }
 
@@ -88,6 +90,8 @@ router.get("/:contentId/play-details", async (request, response) => {
         responseBody.instructorLastName = instructor.lastName;
         responseBody.instructorProfilePic = instructor.profilePic;
         responseBody.nextSuggestion = content.nextSuggestedContentId;
+        responseBody.hashTags = content.hashTags;
+        responseBody.mentionedLinkIds = content.mentionedLinkIds;
         responseBody.message = "Successfully fetched content details";
 
         response.status(200).send(responseBody);
