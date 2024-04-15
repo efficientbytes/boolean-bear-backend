@@ -77,6 +77,8 @@ const getMentionedLink = require("./main/https/links/get_mentioned_link");
 app.use("/mentioned-links", getMentionedLink);
 const increaseContentViews = require("./main/https/statistics/increase-content-views");
 app.use("/statistics/content-views/app", increaseContentViews);
+const appLinks = require("./main/https/app-link/app-link-verifications");
+app.use("/.well-known/assetlinks.json", appLinks);
 
 
 setGlobalOptions({maxInstances: 10});
