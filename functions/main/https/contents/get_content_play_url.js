@@ -119,7 +119,7 @@ router.get("/:contentId/play-link", async (request, response) => {
 
     if (!contentQueryResult.exists) {
         responseBody.message = `${contentId} content does not exists.`;
-        response.status(400).send(responseBody);
+        response.status(404).send(responseBody);
         return;
     }
 
