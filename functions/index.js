@@ -83,6 +83,10 @@ const uploadHomePageBanner = require("./main/https/banners/upload_home_page_bann
 app.use("/admin/ads/banner/home-page/upload", uploadHomePageBanner);
 const getHomePageBanners = require("./main/https/banners/get_home_page_banners");
 app.use("/ads/banners/home-page", getHomePageBanners);
+const uploadFCMToken = require("./main/https/user_private_profile/upload_fcm_token");
+app.use("/user/notifications/token/upload", uploadFCMToken);
+const deleteFCMToken = require("./main/https/user_private_profile/delete_fcm_token");
+app.use("/user/notification/token/delete", deleteFCMToken);
 
 
 setGlobalOptions({maxInstances: 10});
