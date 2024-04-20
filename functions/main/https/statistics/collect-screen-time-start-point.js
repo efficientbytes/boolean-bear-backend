@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
@@ -36,8 +35,6 @@ router.post("/:userAccountId", async (request, response) => {
     };
 
     if (screenTimingList == null || screenTimingList.length === 0) {
-        logger.error(`log||request body cannot be empty`);
-
         responseBody.message = `Incomplete request cannot be processed.`;
         response.status(400).send(responseBody);
         return;

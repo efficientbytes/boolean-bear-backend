@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const {user} = require("firebase-functions/v1/auth");
 const router = express.Router();
@@ -39,8 +38,6 @@ router.post("/:contentId", async (request, response) => {
     }
 
     if (contentId == null) {
-        logger.error(`log||request body cannot be empty`);
-
         responseBody.message = `Request body cannot be null`;
         response.status(404).send(responseBody);
         return;
