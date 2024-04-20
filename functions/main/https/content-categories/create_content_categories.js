@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
@@ -20,10 +19,7 @@ class Category {
 }
 
 router.get("/", async (request, response) => {
-    logger.log(`http||create-content-categories.`);
-
     const type = request.query.type || "shuffled";
-    logger.log(`log|| type is ${type}`);
 
     const responseBody = {
         message: null,
@@ -64,11 +60,9 @@ router.get("/", async (request, response) => {
                 })
                 ;
             }
-            logger.log(`log||Shuffled categories have been successfully uploaded.`);
             responseBody.message = `Shuffled categories have been successfully uploaded.`;
             response.status(200).send(responseBody);
         } catch (error) {
-            logger.error(`log||error uploading categories. Error is ${error.message}`);
             responseBody.message = `Could not upload the shuffled categories, Error is ${error.message}`;
             response.status(500).send(responseBody);
         }
@@ -113,11 +107,9 @@ router.get("/", async (request, response) => {
                 })
                 ;
             }
-            logger.log(`log||curated categories have been successfully uploaded.`);
             responseBody.message = `Curated categories have been successfully uploaded.`;
             response.status(200).send(responseBody);
         } catch (error) {
-            logger.error(`log||error uploading categories. Error is ${error.message}`);
             responseBody.message = `Could not upload the curated categories, Error is ${error.message}`;
             response.status(500).send(responseBody);
         }
