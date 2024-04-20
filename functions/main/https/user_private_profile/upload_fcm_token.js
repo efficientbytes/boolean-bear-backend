@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
@@ -41,8 +40,6 @@ router.post("/", async (request, response) => {
     const updatedOn = time;
 
     if (token == null) {
-        logger.error(`Token is not provided.`);
-
         responseBody.message = `Token is not provided.`;
         response.status(400).send(responseBody);
         return;
