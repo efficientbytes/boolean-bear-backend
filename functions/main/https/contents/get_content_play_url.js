@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const {escape} = require("querystring");
 const crypto = require("crypto");
@@ -147,10 +146,8 @@ router.get("/:contentId/play-link", async (request, response) => {
     }
 
     const content = contentQueryResult.data();
-    logger.log(`log||content title is ${content.title}`);
 
     const videoId = content.videoId;
-    logger.log(`log||content title ${content.title}. video id is ${videoId}`);
 
     try {
         const signedUrl = generateSignedUrl(videoId, 10);
