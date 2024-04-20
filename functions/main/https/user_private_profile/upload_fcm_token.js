@@ -4,10 +4,32 @@ const express = require("express");
 const router = express.Router();
 
 router.post("/", async (request, response) => {
-    logger.log(`http||upload-fcm-token.`);
+    if (
+        !request.headers.authorization ||
+        !request.headers.authorization.startsWith("Bearer ")
+    ) {
+        response.status(401).send({message: `Invalid auth token`});
+        return;
+    }
+    const idToken = request.headers.authorization.split(' ')[1];
+    let userAccountId;
+    try {
+        const tokenData = await admin.auth().verifyIdToken(idToken);
+        if (tokenData == null) {
+            response.status(401).send({message: `Invalid auth token`});
+            return;
+        }
+        userAccountId = tokenData.uid;
+        if (userAccountId == null) {
+            response.status(401).send({message: `Invalid auth token`});
+            return;
+        }
+    } catch (error) {
+        response.status(401).send({message: `Invalid auth token`});
+        return;
+    }
 
     const token = request.body.token || null;
-    const userAccountId = request.body.userAccountId || null;
 
     const responseBody = {
         remoteNotificationToken: null,
@@ -17,14 +39,6 @@ router.post("/", async (request, response) => {
     const time = admin.firestore.FieldValue.serverTimestamp();
     const createdOn = time;
     const updatedOn = time;
-
-    if (userAccountId == null) {
-        logger.error(`User account id is not provided.`);
-
-        responseBody.message = `User account id is not provided.`;
-        response.status(401).send(responseBody);
-        return;
-    }
 
     if (token == null) {
         logger.error(`Token is not provided.`);

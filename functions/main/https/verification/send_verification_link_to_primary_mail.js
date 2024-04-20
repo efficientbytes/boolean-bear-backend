@@ -9,12 +9,33 @@ const mailjet = require("node-mailjet").apiConnect(
 );
 
 router.post("/", async (request, response) => {
-    logger.log(`http||send-verification-link-to-primary-mail`);
+    if (
+        !request.headers.authorization ||
+        !request.headers.authorization.startsWith("Bearer ")
+    ) {
+        response.status(401).send({message: `Invalid auth token`});
+        return;
+    }
+    const idToken = request.headers.authorization.split(' ')[1];
+    let userAccountId;
+    try {
+        const tokenData = await admin.auth().verifyIdToken(idToken);
+        if (tokenData == null) {
+            response.status(401).send({message: `Invalid auth token`});
+            return;
+        }
+        userAccountId = tokenData.uid;
+        if (userAccountId == null) {
+            response.status(401).send({message: `Invalid auth token`});
+            return;
+        }
+    } catch (error) {
+        response.status(401).send({message: `Invalid auth token`});
+        return;
+    }
 
     const emailAddress = request.body.emailAddress || null;
     logger.log(`param||email address is : ${emailAddress}`);
-    const userAccountId = request.body.userAccountId || null;
-    logger.log(`param||user account id is : ${userAccountId}`);
     const firstName = request.body.firstName || null;
     logger.log(`param||first name is : ${firstName}`);
 
@@ -22,14 +43,6 @@ router.post("/", async (request, response) => {
         message: null,
         emailAddress: emailAddress,
     };
-
-    if (userAccountId == null) {
-        logger.error(`log||user account id is null.`);
-
-        responseBody.message = `User account id is not provided.`;
-        response.status(400).send(responseBody);
-        return;
-    }
 
     if (emailAddress == null) {
         logger.error(`log||email address is null.`);
