@@ -1,11 +1,8 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
 router.get("/", async (request, response) => {
-    logger.log(`http||get-all-home-page-banners.`);
-
     const responseBody = {
         banners: null,
         message: null

@@ -1,11 +1,8 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
 router.get("/:categoryId", async (request, response) => {
-    logger.log(`http||get-shuffled-content-ids.`);
-
     const categoryId = request.params.categoryId || null;
 
     const responseBody = {

@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
@@ -45,10 +44,6 @@ router.post("/", async (request, response) => {
     const feedbackQueryResult = await feedbackQuery.get();
 
     if (feedbackQueryResult.size >= 3) {
-        logger.error(
-            `log|| too many feedback by user with user account id ${userAccountId}`,
-        );
-
         responseBody.feedback = feedback;
         responseBody.userAccountId = userAccountId;
         responseBody.message = `We're grateful for your feedback! It appears you've exceeded the maximum number of submissions allowed at this time. Your insights are valuable, and we encourage you to revisit us in the future if you have more feedback to offer.`;
@@ -64,10 +59,6 @@ router.post("/", async (request, response) => {
             submittedOn: admin.firestore.FieldValue.serverTimestamp(),
         })
         .then(() => {
-            //successfully sent
-            logger.log(
-                `log|| feedback submitted by user with user account id ${userAccountId}.`,
-            );
 
             responseBody.feedback = feedback;
             responseBody.userAccountId = userAccountId;
@@ -76,9 +67,6 @@ router.post("/", async (request, response) => {
             response.status(200).send(responseBody);
         })
         .catch((error) => {
-            logger.error(
-                `log|| could not submit feedback by user with user account id ${userAccountId}. Error : ${error.message}`,
-            );
 
             responseBody.feedback = feedback;
             responseBody.userAccountId = userAccountId;

@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
@@ -37,8 +36,6 @@ router.get("/:instructorId", async (request, response) => {
     };
 
     if (instructorId == null) {
-        logger.error(`log||instructor id cannot be null`);
-
         responseBody.message = `instructor id cannot be null`;
         response.status(400).send(responseBody);
         return;
@@ -49,8 +46,6 @@ router.get("/:instructorId", async (request, response) => {
     const instructorProfileSnapshot = await instructorProfileRef.get();
 
     if (!instructorProfileSnapshot.exists) {
-        logger.error(`log||instructor profile does not exists`);
-
         responseBody.message = `Instructor profile does not exists.`;
         response.status(400).send(responseBody);
         return;

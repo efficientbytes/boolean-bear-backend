@@ -1,11 +1,8 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
 router.post("/", async (request, response) => {
-    logger.log(`http||upload-home-page-banner.`);
-
     const title = request.body.title || null;
     const imageLink = request.body.imageLink || null;
     const redirectLink = request.body.redirectLink || null;

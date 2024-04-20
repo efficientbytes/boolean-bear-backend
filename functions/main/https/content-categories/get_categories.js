@@ -1,10 +1,7 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 router.get("/", async (request, response) => {
-    logger.log(`http||get-content-categories.`);
-
     const type = request.query.type || "shuffled";
 
     const responseBody = {
@@ -22,8 +19,6 @@ router.get("/", async (request, response) => {
             const categoriesResult = await categoryRef.get();
 
             if (categoriesResult.empty) {
-                logger.error(`log||There are no categories`);
-
                 responseBody.message = `There are no categories`;
                 responseBody.categoryList = null;
                 response.status(404).send(responseBody);
@@ -58,8 +53,6 @@ router.get("/", async (request, response) => {
             response.status(200).send(responseBody);
 
         } catch (error) {
-            logger.error(`log||Error fetching content categories.`);
-
             responseBody.message = error.message;
             responseBody.categoryList = null;
             response.status(500).send(responseBody);
@@ -78,8 +71,6 @@ router.get("/", async (request, response) => {
             const categoriesResult = await categoryRef.get();
 
             if (categoriesResult.empty) {
-                logger.error(`log||There are no categories`);
-
                 responseBody.message = `There are no categories`;
                 responseBody.categoryList = null;
                 response.status(404).send(responseBody);
@@ -114,8 +105,6 @@ router.get("/", async (request, response) => {
             response.status(200).send(responseBody);
 
         } catch (error) {
-            logger.error(`log||Error fetching content categories.`);
-
             responseBody.message = error.message;
             responseBody.categoryList = null;
             response.status(500).send(responseBody);

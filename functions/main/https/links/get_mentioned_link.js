@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
@@ -37,8 +36,6 @@ router.get("/:linkId", async (request, response) => {
     };
 
     if (mentionedLinkId == null) {
-        logger.error(`log||mentioned link id cannot be null`);
-
         responseBody.message = `mentioned link id cannot be null`;
         response.status(400).send(responseBody);
         return;
@@ -49,8 +46,6 @@ router.get("/:linkId", async (request, response) => {
     const mentionedLinkSnapshot = await mentionedLinkRef.get();
 
     if (!mentionedLinkSnapshot.exists) {
-        logger.error(`log||mentioned link does not exists`);
-
         responseBody.message = `mentioned link does not exists.`;
         response.status(400).send(responseBody);
         return;

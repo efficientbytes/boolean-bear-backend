@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
@@ -40,20 +39,12 @@ router.get("/", async (request, response) => {
     const userProfileSnapshot = await userProfileRef.get();
 
     if (!userProfileSnapshot.exists) {
-        //user does not exits
-        logger.error(
-            `log||user account id is ${userAccountId}. User profile does not exists.`,
-        );
-
         responseBody.userProfile = null;
         responseBody.message = "User profile does not exists.";
         responseBody.signOut = false;
         response.status(404).send(responseBody);
         return;
     }
-
-    // user profile exits, so return the data associated with it
-    logger.log(`log||user account id is ${userAccountId}. User profile exists.`);
 
     responseBody.signOut = false;
     responseBody.message = "User profile fetched successfully";

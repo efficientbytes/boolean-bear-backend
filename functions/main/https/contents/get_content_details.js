@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
@@ -72,12 +71,9 @@ router.get("/:contentId/play-details", async (request, response) => {
     }
 
     const content = contentQueryResult.data();
-    logger.log(`log||content title is ${content.title}`);
 
     const videoId = content.videoId;
-    logger.log(`log||content title ${content.title}. video id is ${videoId}`);
     const instructorId = content.instructorId;
-    logger.log(`log||content title ${content.title}. instructor id is ${instructorId}`);
 
     const videoPath = `/ASSETS/VIDEOS/FILES/${videoId}`;
     const videoRef = admin.firestore().doc(videoPath);
@@ -95,9 +91,6 @@ router.get("/:contentId/play-details", async (request, response) => {
 
         const video = videoSnapshot.data();
         const instructor = instructorSnapshot.data();
-
-        logger.log(`log||resolved video promise.video id is ${video.videoId}`);
-        logger.log(`log||resolved instructor promise. instructor id is ${instructor.instructorId}`);
 
         responseBody.contentId = contentId;
         responseBody.title = content.title;
@@ -119,10 +112,7 @@ router.get("/:contentId/play-details", async (request, response) => {
 
         response.status(200).send(responseBody);
     } catch (error) {
-
-        logger.error(`log|| Error is ${error.message}`);
         responseBody.message = `Failed to fetch the content details. ${error.message}`;
-
         response.status(500).send(responseBody);
     }
 

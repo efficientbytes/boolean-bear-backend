@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const logger = require("firebase-functions/logger");
 const {v4: uuidv4} = require("uuid");
 const admin = require("firebase-admin");
 const mailjet = require("node-mailjet").apiConnect(
@@ -35,9 +34,7 @@ router.post("/", async (request, response) => {
     }
 
     const emailAddress = request.body.emailAddress || null;
-    logger.log(`param||email address is : ${emailAddress}`);
     const firstName = request.body.firstName || null;
-    logger.log(`param||first name is : ${firstName}`);
 
     const responseBody = {
         message: null,
@@ -45,16 +42,12 @@ router.post("/", async (request, response) => {
     };
 
     if (emailAddress == null) {
-        logger.error(`log||email address is null.`);
-
         responseBody.message = `Email address is not provided.`;
         response.status(400).send(responseBody);
         return;
     }
 
     if (firstName == null) {
-        logger.error(`log||first name is null.`);
-
         responseBody.message = `First name is not provided.`;
         response.status(400).send(responseBody);
         return;
@@ -65,13 +58,9 @@ router.post("/", async (request, response) => {
         .auth()
         .getUser(userAccountId)
         .then((result) => {
-            logger.log(`log||User authenticated, user details ${result.toJSON()}`);
             return true;
         })
         .catch((error) => {
-            logger.error(
-                `log||user id is not authenticated. Error is ${error.message}`,
-            );
             responseBody.message = `User id is not authenticated.`;
             return false;
         });
@@ -92,10 +81,6 @@ router.post("/", async (request, response) => {
     const primaryVerificationQueryResult = await primaryVerificationQuery.get();
 
     if (primaryVerificationQueryResult.size > 5) {
-        logger.error(
-            `log||too many verification request by user with userAccountId${userAccountId} for email address ${emailAddress}`,
-        );
-
         responseBody.message = `Verification limit for ${emailAddress} has exceeded. Try a different email address.`;
         response.status(400).send(responseBody);
         return;
@@ -146,23 +131,11 @@ router.post("/", async (request, response) => {
             ],
         })
         .then((result) => {
-            logger.log(
-                `log||verification mail sent successfully to user ${firstName} with account id ${userAccountId} and email address ${emailAddress}`,
-            );
-            logger.log(`log||verification mail result ${result.response}`);
-
             responseBody.message = `Verification mail sent successfully`;
-
             return true;
         })
         .catch((error) => {
-            logger.error(
-                `log||failed to send verification mail to user ${firstName} with account id ${userAccountId} and email address ${emailAddress}`,
-            );
-            logger.log(`log||error is ${error.message}`);
-
             responseBody.message = `Error code ${error.code} : ${error.message}`;
-
             return false;
         });
 
