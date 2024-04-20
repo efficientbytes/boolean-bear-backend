@@ -8,7 +8,7 @@ router.post("/:contentId", async (request, response) => {
         !request.headers.authorization ||
         !request.headers.authorization.startsWith("Bearer ")
     ) {
-        response.status(401).send({message: `Invalid auth token`});
+        response.status(401).send({message: `Authentication required.`});
         return;
     }
     const idToken = request.headers.authorization.split(' ')[1];
