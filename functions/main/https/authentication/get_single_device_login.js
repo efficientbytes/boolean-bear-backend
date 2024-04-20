@@ -1,5 +1,4 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const router = express.Router();
 
@@ -41,11 +40,6 @@ router.get("/", async (request, response) => {
     const userProfileSnapshot = await userProfileRef.get();
 
     if (!userProfileSnapshot.exists) {
-        //user does not exits
-        logger.error(
-            `log||user account id is ${userAccountId}. User profile does not exists.`,
-        );
-
         responseBody.deviceId = null;
         responseBody.createdOn = null;
         responseBody.message = "User profile does not exists.";
@@ -53,18 +47,11 @@ router.get("/", async (request, response) => {
         return;
     }
 
-    // user profile exits, so return the data associated with it
-    logger.log(`log||user account id is ${userAccountId}. User profile exists.`);
-
     const singleDeviceLoginPath = `/SINGLE_DEVICE_LOGIN/${userAccountId}`;
     const singleDeviceLoginRef = admin.firestore().doc(singleDeviceLoginPath);
     const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
 
     if (!singleDeviceLoginSnapshot.exists) {
-        //document does not exists
-        logger.error(
-            `log||single device login id document does not exists for user with user account id ${userAccountId}`,
-        );
         responseBody.deviceId = null;
         responseBody.createdOn = null;
         responseBody.message = `Could not find device login records`;
