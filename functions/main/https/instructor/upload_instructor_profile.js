@@ -1,12 +1,9 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
 const express = require("express");
 const {v4: uuidv4} = require("uuid");
 const router = express.Router();
 
 router.post("/", async (request, response) => {
-    logger.log(`http||upload-instructor-profile.`);
-
     const instructorId = uuidv4();
     const firstName = request.body.firstName || null;
     const lastName = request.body.lastName || null;
@@ -27,24 +24,18 @@ router.post("/", async (request, response) => {
     };
 
     if (firstName == null) {
-        logger.error(`log||first name cannot be null`);
-
         responseBody.message = `first name cannot be null`;
         response.status(400).send(responseBody);
         return;
     }
 
     if (phoneNumber == null) {
-        logger.error(`log||phone number cannot be null`);
-
         responseBody.message = `phone number cannot be null`;
         response.status(400).send(responseBody);
         return;
     }
 
     if (emailAddress == null) {
-        logger.error(`log||email address cannot be null`);
-
         responseBody.message = `email address cannot be null`;
         response.status(400).send(responseBody);
         return;
@@ -78,14 +69,9 @@ router.post("/", async (request, response) => {
         joinedOn: joinedOn,
         updatedOn: updatedOn
     }).then(() => {
-
-        logger.log(`log||uploaded instructor profile with id ${instructorId} successfully`);
-
         responseBody.message = `Uploaded instructor profile with instructor id ${instructorId}`;
         response.status(200).send(responseBody);
     }).catch((error) => {
-        logger.error(`log||failed to upload instructor profile`);
-
         responseBody.message = error.message;
         response.status(500).send(responseBody);
     });
