@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const express = require("express");
+const {logger} = require("firebase-functions");
 const router = express.Router();
 
 router.post("/", async (request, response) => {
@@ -51,6 +52,7 @@ router.post("/", async (request, response) => {
             response.status(200).send(responseBody);
         })
         .catch((error) => {
+            logger.error(`delete-user-account||failed||http||error is ${error.message}`);
             responseBody.message = error.message;
             response.status(500).send(responseBody);
         });
