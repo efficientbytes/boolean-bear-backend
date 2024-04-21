@@ -1,4 +1,5 @@
 const express = require("express");
+const {logger} = require("firebase-functions");
 const router = express.Router();
 require("dotenv").config();
 const twilioServiceSid = process.env.TWILIO_SERVICE_SID;
@@ -30,7 +31,7 @@ router.post("/", async (request, response) => {
             }
         })
         .catch((error) => {
-
+            logger.error(`send-otp-to-phone-number||failed||http||error is ${error.message}`);
             response.status(503).send({
                 message: `Verification error identifier ${error.code}`,
                 phoneNumber: phoneNumber,

@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const express = require("express");
+const {logger} = require("firebase-functions");
 const router = express.Router();
 
 router.post("/", async (request, response) => {
@@ -71,6 +72,7 @@ router.post("/", async (request, response) => {
             responseBody.signOut = false;
         })
         .catch((error) => {
+            logger.error(`update-user-private-profile-basics||failed||http||error is ${error.message}`);
             responseBody.userProfile = null;
             responseBody.message = `User profile could not be updated. Error is ${error.message}`;
             responseBody.signOut = false;

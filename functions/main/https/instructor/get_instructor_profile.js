@@ -67,7 +67,6 @@ router.get("/:instructorId", async (request, response) => {
         skills: instructorProfile.skills
     };
     responseBody.message = `Instructor profile successfully fetched.`
-
     response.status(200).send(responseBody);
 
 });

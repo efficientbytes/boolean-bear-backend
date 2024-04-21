@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {v4: uuidv4} = require("uuid");
 const admin = require("firebase-admin");
+const {logger} = require("firebase-functions");
 const mailjet = require("node-mailjet").apiConnect(
     process.env.MAIL_JET_API_KEY,
     process.env.MAIL_JET_SECRET_KEY,
@@ -135,6 +136,7 @@ router.post("/", async (request, response) => {
             return true;
         })
         .catch((error) => {
+            logger.error(`send-verification-link-to-primary-mail||failed||http||error is ${error.message}`);
             responseBody.message = `Error code ${error.code} : ${error.message}`;
             return false;
         });

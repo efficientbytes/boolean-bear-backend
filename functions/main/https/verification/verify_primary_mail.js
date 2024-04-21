@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const admin = require("firebase-admin");
+const {logger} = require("firebase-functions");
 
 function generateHtml(title, caption) {
     const htmlContent = `
@@ -166,6 +167,7 @@ router.get("/", async (request, response) => {
             return true;
         })
         .catch((error) => {
+            logger.error(`verify-primary-mail||failed||http||error is ${error.message}`);
             responseBody.title = `Verification Failed`;
             responseBody.caption = `${error.message}`;
             return false;
@@ -189,6 +191,7 @@ router.get("/", async (request, response) => {
             responseBody.caption = `You can now go back to the app and continue using it.`;
         })
         .catch((error) => {
+            logger.error(`verify-primary-mail||failed||http||error is ${error.message}`);
             responseBody.title = `Verification Failed`;
             responseBody.caption = `Error ${error.message}`;
             const htmlContent = generateHtml(

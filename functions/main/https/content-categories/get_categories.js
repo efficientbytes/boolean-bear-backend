@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const express = require("express");
+const {logger} = require("firebase-functions");
 const router = express.Router();
 router.get("/", async (request, response) => {
     const type = request.query.type || "shuffled";
@@ -53,6 +54,7 @@ router.get("/", async (request, response) => {
             response.status(200).send(responseBody);
 
         } catch (error) {
+            logger.error(`get-categories||failed||http||shuffled||error is ${error.message}`);
             responseBody.message = error.message;
             responseBody.categoryList = null;
             response.status(500).send(responseBody);
@@ -105,6 +107,7 @@ router.get("/", async (request, response) => {
             response.status(200).send(responseBody);
 
         } catch (error) {
+            logger.error(`get-categories||failed||http||curated||error is ${error.message}`);
             responseBody.message = error.message;
             responseBody.categoryList = null;
             response.status(500).send(responseBody);
