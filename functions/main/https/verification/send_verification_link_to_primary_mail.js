@@ -54,23 +54,6 @@ router.post("/", async (request, response) => {
         return;
     }
 
-    //check if user id is registered
-    const userIdCheck = await admin
-        .auth()
-        .getUser(userAccountId)
-        .then((result) => {
-            return true;
-        })
-        .catch((error) => {
-            responseBody.message = `User id is not authenticated.`;
-            return false;
-        });
-
-    if (userIdCheck !== true) {
-        response.status(401).send(responseBody);
-        return;
-    }
-
     //check how many times the verification was requested by this user for this particular mail address (if more than 5 don't send any new verification)
     const primaryMailVerificationKeyPath = `/VERIFICATION/PRIMARY_MAIL/FILES/`;
     const primaryVerificationQuery = admin

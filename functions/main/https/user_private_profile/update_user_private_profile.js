@@ -45,15 +45,6 @@ router.post("/", async (request, response) => {
 
     const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/${userAccountId}`;
     const userProfileRef = admin.firestore().doc(userProfilePath);
-    const userProfileSnapshot = await userProfileRef.get();
-
-    if (!userProfileSnapshot.exists) {
-        responseBody.userProfile = null;
-        responseBody.message = "User profile does not exists.";
-        responseBody.signOut = true;
-        response.status(404).send(responseBody);
-        return;
-    }
 
     await userProfileRef
         .update({
