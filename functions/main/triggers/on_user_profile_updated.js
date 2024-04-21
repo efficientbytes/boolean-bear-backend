@@ -6,7 +6,7 @@ const {setGlobalOptions} = require("firebase-functions/v2");
 
 setGlobalOptions({maxInstances: 10});
 exports.onUserProfileUpdated = onDocumentUpdated(
-    "/USER/PRIVATE_PROFILE/FILES/{userAccountId}",
+    "/USER/PRIVATE-PROFILE/FILES/{userAccountId}",
     async (event) => {
 
         logger.log(`trigger onUpdate||on-user-profile-updated.`);
@@ -41,7 +41,7 @@ exports.onUserProfileUpdated = onDocumentUpdated(
                     logger.log(
                         `log||user account id is ${userAccountId} and custom claim for email verified has been set to false.`,
                     );
-                    const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/${userAccountId}`;
+                    const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
                     await admin.firestore().doc(userProfilePath).update({
                         lastUpdatedOn: admin.firestore.FieldValue.serverTimestamp(),
                     });

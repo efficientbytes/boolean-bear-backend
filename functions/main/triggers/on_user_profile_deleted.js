@@ -6,7 +6,7 @@ const {setGlobalOptions} = require("firebase-functions/v2");
 
 setGlobalOptions({maxInstances: 10});
 exports.onUserProfileDeleted = onDocumentDeleted(
-    "/USER/PRIVATE_PROFILE/FILES/{userAccountId}",
+    "/USER/PRIVATE-PROFILE/FILES/{userAccountId}",
     async (event) => {
         logger.log(`trigger onUpdate||on-user-profile-deleted.`);
         const userProfileSnapshot = event.data;
