@@ -35,7 +35,7 @@ router.post("/", async (request, response) => {
                     phoneNumber: phoneNumber,
                 });
             } else if (verification_check.status === "pending") {
-                response.status(401).send({
+                response.status(400).send({
                     message: `Verification failed`,
                     phoneNumber: phoneNumber,
                 });
