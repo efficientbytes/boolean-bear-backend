@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const express = require("express");
+const {logger} = require("firebase-functions");
 const router = express.Router();
 
 router.get("/:contentId", async (request, response) => {
@@ -22,7 +23,6 @@ router.get("/:contentId", async (request, response) => {
 
     if (contentId == null) {
         responseBody.message = `Content Id is not provided.`;
-
         response.status(400).send(responseBody);
         return;
     }
@@ -33,9 +33,7 @@ router.get("/:contentId", async (request, response) => {
     const contentQueryResult = await contentRef.get();
 
     if (!contentQueryResult.exists) {
-
         responseBody.message = `${contentId} content does not exists.`;
-
         response.status(400).send(responseBody);
         return;
     }
@@ -82,6 +80,7 @@ router.get("/:contentId", async (request, response) => {
         }
 
     } catch (error) {
+        logger.error(`get-contents||failed||http||error is ${error.message}`);
         responseBody.message = `Failed to fetch the content. ${error.message}`;
         response.status(500).send(responseBody);
     }

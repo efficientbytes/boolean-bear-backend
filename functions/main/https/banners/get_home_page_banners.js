@@ -9,7 +9,6 @@ router.get("/", async (request, response) => {
     }
 
     const currentTime = new Date();
-    //const currentTimeInMillis = currentTime.getTime();
 
     const bannerPath = `/ASSETS/AD/HOME-PAGE-BANNER/`;
     const bannerCollectionRef = admin.firestore().collection(bannerPath);

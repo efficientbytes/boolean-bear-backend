@@ -59,7 +59,6 @@ router.get("/:linkId", async (request, response) => {
         name: mentionedLink.name,
     };
     responseBody.message = `Mentioned link successfully fetched.`
-
     response.status(200).send(responseBody);
 
 });

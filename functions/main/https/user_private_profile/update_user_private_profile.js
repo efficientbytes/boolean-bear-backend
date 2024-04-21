@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const express = require("express");
+const {logger} = require("firebase-functions");
 const router = express.Router();
 
 router.post("/", async (request, response) => {
@@ -44,15 +45,6 @@ router.post("/", async (request, response) => {
 
     const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/${userAccountId}`;
     const userProfileRef = admin.firestore().doc(userProfilePath);
-    const userProfileSnapshot = await userProfileRef.get();
-
-    if (!userProfileSnapshot.exists) {
-        responseBody.userProfile = null;
-        responseBody.message = "User profile does not exists.";
-        responseBody.signOut = true;
-        response.status(404).send(responseBody);
-        return;
-    }
 
     await userProfileRef
         .update({
@@ -69,6 +61,7 @@ router.post("/", async (request, response) => {
             responseBody.signOut = false;
         })
         .catch((error) => {
+            logger.error(`update-user-private-profile||failed||http||error is ${error.message}`);
             responseBody.userProfile = null;
             responseBody.message = `User profile could not be updated. Error is ${error.message}`;
             responseBody.signOut = false;

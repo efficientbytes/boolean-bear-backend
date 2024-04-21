@@ -2,6 +2,7 @@ const admin = require("firebase-admin");
 const express = require("express");
 const {escape} = require("querystring");
 const crypto = require("crypto");
+const {logger} = require("firebase-functions");
 const router = express.Router();
 const securityKey = process.env.CONTENT_API_KEY;
 
@@ -154,9 +155,10 @@ router.get("/:contentId/play-link", async (request, response) => {
         responseBody.playUrl = signedUrl;
         responseBody.message = `Successfully fetched play url`;
         response.status(200).send(responseBody);
-    } catch (exception) {
+    } catch (error) {
+        logger.error(`get-content-play-url||failed||http||error is ${error.message}`);
         responseBody.playUrl = null;
-        responseBody.message = exception.message;
+        responseBody.message = error.message;
         response.status(500).send(responseBody);
     }
 });

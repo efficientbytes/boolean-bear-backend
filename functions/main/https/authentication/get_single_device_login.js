@@ -28,23 +28,14 @@ router.get("/", async (request, response) => {
         return;
     }
 
-
     const responseBody = {
-        deviceId: null,
-        createdOn: null,
+        data: null,
         message: null,
     };
 
-    const userProfilePath = `/USER/PRIVATE_PROFILE/FILES/${userAccountId}`;
-    const userProfileRef = admin.firestore().doc(userProfilePath);
-    const userProfileSnapshot = await userProfileRef.get();
-
-    if (!userProfileSnapshot.exists) {
-        responseBody.deviceId = null;
-        responseBody.createdOn = null;
-        responseBody.message = "User profile does not exists.";
-        response.status(404).send(responseBody);
-        return;
+    responseBody.data = {
+        deviceId: null,
+        createdOn: null,
     }
 
     const singleDeviceLoginPath = `/SINGLE_DEVICE_LOGIN/${userAccountId}`;
@@ -52,18 +43,16 @@ router.get("/", async (request, response) => {
     const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
 
     if (!singleDeviceLoginSnapshot.exists) {
-        responseBody.deviceId = null;
-        responseBody.createdOn = null;
         responseBody.message = `Could not find device login records`;
-        response.status(400).send(responseBody);
+        response.status(404).send(responseBody);
         return;
     }
     const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
 
-    responseBody.deviceId = singleDeviceLoginData.deviceId;
-    responseBody.createdOn = singleDeviceLoginData.createdOn._seconds;
-    responseBody.message = null;
+    responseBody.data.deviceId = singleDeviceLoginData.deviceId;
+    responseBody.data.createdOn = singleDeviceLoginData.createdOn._seconds;
 
+    responseBody.message = `Successfully fetched single device login.`;
     response.status(200).send(responseBody);
 });
 

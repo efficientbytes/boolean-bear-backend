@@ -1,6 +1,7 @@
 const admin = require("firebase-admin");
 const express = require("express");
 const {user} = require("firebase-functions/v1/auth");
+const {logger} = require("firebase-functions");
 const router = express.Router();
 
 router.post("/:contentId", async (request, response) => {
@@ -51,7 +52,6 @@ router.post("/:contentId", async (request, response) => {
     const contentQueryResult = await contentRef.get();
 
     if (!contentQueryResult.exists) {
-
         responseBody.message = `Content does not exists`;
         response.status(400).send(responseBody);
         return;
@@ -69,6 +69,7 @@ router.post("/:contentId", async (request, response) => {
         responseBody.message = `Successfully content view increased`;
         response.status(200).send(responseBody);
     }).catch((error) => {
+        logger.error(`increase-content-views||failed||http||error is ${error.message}`);
         responseBody.message = error.message;
         response.status(500).send(responseBody);
     });

@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const express = require("express");
+const {logger} = require("firebase-functions");
 const router = express.Router();
 
 router.post("/:userAccountId", async (request, response) => {
@@ -56,6 +57,7 @@ router.post("/:userAccountId", async (request, response) => {
         responseBody.message = `Uploaded successfully`
         response.status(200).send(responseBody);
     }).catch(error => {
+        logger.error(`collect-screen-time-start-point||failed||http||error is ${error.message}`);
         responseBody.message = error.message;
         response.status(500).send(responseBody);
     });
