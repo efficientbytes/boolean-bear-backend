@@ -32,7 +32,7 @@ router.post("/", async (request, response) => {
     const firstName = request.body.firstName || null;
     const lastName = request.body.lastName || null;
     const emailAddress = request.body.emailAddress || null;
-    const profession = request.body.profession || null;
+    const profession = request.body.profession || 0;
 
     const responseBody = {
         userProfile: null,
@@ -83,7 +83,7 @@ router.post("/", async (request, response) => {
         activityId: userProfile.activityId,
         profession: userProfile.profession,
         linkedInUsername: userProfile.linkedInUsername,
-        gitHubUserName: userProfile.gitHubUserName,
+        gitHubUsername: userProfile.gitHubUsername,
         universityName: userProfile.universityName,
         createdOn: userProfile.createdOn._seconds,
         lastUpdatedOn: userProfile.createdOn._seconds,
