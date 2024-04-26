@@ -87,6 +87,8 @@ const uploadFCMToken = require("./main/https/user_private_profile/upload_fcm_tok
 app.use("/user/notifications/token/upload", uploadFCMToken);
 const deleteFCMToken = require("./main/https/user_private_profile/delete_fcm_token");
 app.use("/user/notification/token/delete", deleteFCMToken);
+const deleteAccountAppLink = require("./main/https/app-link/delete-account-app-link");
+app.use("/account/delete/", deleteAccountAppLink);
 
 
 setGlobalOptions({maxInstances: 10});
