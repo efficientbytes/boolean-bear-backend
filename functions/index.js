@@ -5,7 +5,9 @@ const cors = require("cors");
 const {setGlobalOptions} = require("firebase-functions/v2");
 const express = require("express");
 const app = express();
+const bodyParser = require('body-parser');
 app.use(cors({origin: true}));
+app.use(bodyParser.urlencoded({extended: true}));
 
 if (!admin.apps.length) {
     admin.initializeApp({
