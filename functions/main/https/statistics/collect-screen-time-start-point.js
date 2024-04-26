@@ -3,7 +3,7 @@ const express = require("express");
 const {logger} = require("firebase-functions");
 const router = express.Router();
 
-router.post("/:userAccountId", async (request, response) => {
+router.post("/", async (request, response) => {
     if (
         !request.headers.authorization ||
         !request.headers.authorization.startsWith("Bearer ")

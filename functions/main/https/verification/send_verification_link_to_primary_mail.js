@@ -86,7 +86,7 @@ router.post("/", async (request, response) => {
 
     //mail creation
     const templateId = 5772111;
-    const verificationLink = `https://app.booleanbear.com/verification/primary-mail/verify-link?emailAddress=${emailAddress}&id=${userAccountId}&publicKey=${verificationData.key}`;
+    const verificationLink = `https://verify.booleanbear.com/verification/primary-mail/verify-link?emailAddress=${emailAddress}&id=${userAccountId}&publicKey=${verificationData.key}`;
 
     const templateData = {
         firstName: firstName,
