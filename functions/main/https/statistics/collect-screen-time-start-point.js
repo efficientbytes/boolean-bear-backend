@@ -4,36 +4,23 @@ const {logger} = require("firebase-functions");
 const router = express.Router();
 
 router.post("/", async (request, response) => {
-    if (
-        !request.headers.authorization ||
-        !request.headers.authorization.startsWith("Bearer ")
-    ) {
-        response.status(401).send({message: `Authentication required.`});
-        return;
-    }
-    const idToken = request.headers.authorization.split(' ')[1];
-    let userAccountId;
-    try {
-        const tokenData = await admin.auth().verifyIdToken(idToken);
-        if (tokenData == null) {
-            response.status(401).send({message: `Invalid auth token`});
-            return;
-        }
-        userAccountId = tokenData.uid;
-        if (userAccountId == null) {
-            response.status(401).send({message: `Invalid auth token`});
-            return;
-        }
-    } catch (error) {
-        response.status(401).send({message: `Invalid auth token`});
-        return;
-    }
 
-    const screenTimingList = request.body || null;
+    const screenTimingList = request.body.screenTimingPerDayList || null;
+    const userAccountId = request.body.userAccountId || null;
 
     const responseBody = {
         message: null,
     };
+
+    const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+    const userProfileRef = admin.firestore().doc(userProfilePath);
+    const userProfileSnapshot = await userProfileRef.get();
+
+    if (!userProfileSnapshot.exists) {
+        responseBody.message = "User profile does not exists.";
+        response.status(404).send(responseBody);
+        return;
+    }
 
     if (screenTimingList == null || screenTimingList.length === 0) {
         responseBody.message = `Incomplete request cannot be processed.`;

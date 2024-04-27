@@ -33,8 +33,6 @@ router.post("/:contentId", async (request, response) => {
     const contentId = request.params.contentId || null;
 
     const responseBody = {
-        contentId: contentId,
-        userAccountId: null,
         message: null
     }
 

@@ -29,9 +29,8 @@ router.get("/", async (request, response) => {
     }
 
     const responseBody = {
-        userProfile: null,
+        data: null,
         message: null,
-        signOut: false,
     };
 
     const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
@@ -39,18 +38,13 @@ router.get("/", async (request, response) => {
     const userProfileSnapshot = await userProfileRef.get();
 
     if (!userProfileSnapshot.exists) {
-        responseBody.userProfile = null;
         responseBody.message = "User profile does not exists.";
-        responseBody.signOut = false;
         response.status(404).send(responseBody);
         return;
     }
 
-    responseBody.signOut = false;
-    responseBody.message = "User profile fetched successfully";
-
     const userProfile = userProfileSnapshot.data();
-    responseBody.userProfile = {
+    responseBody.data = {
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
         emailAddress: userProfile.emailAddress,
@@ -67,6 +61,7 @@ router.get("/", async (request, response) => {
         lastUpdatedOn: userProfile.createdOn._seconds,
     };
 
+    responseBody.message = "User profile fetched successfully";
     response.status(200).send(responseBody);
 });
 

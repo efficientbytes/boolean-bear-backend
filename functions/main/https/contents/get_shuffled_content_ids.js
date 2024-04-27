@@ -6,12 +6,12 @@ router.get("/:categoryId", async (request, response) => {
     const categoryId = request.params.categoryId || null;
 
     const responseBody = {
-        contentIds: null,
+        data: null,
         message: null
     }
 
     if (categoryId == null) {
-        responseBody.contentIds = null;
+        responseBody.data = null;
         responseBody.message = `Category id is not provided.`;
         response.status(400).send(responseBody);
         return;
@@ -24,7 +24,7 @@ router.get("/:categoryId", async (request, response) => {
     const categoryQueryResult = await categoryRef.get();
 
     if (!categoryQueryResult.exists) {
-        responseBody.contentIds = null;
+        responseBody.data = null;
         responseBody.message = `${categoryId} category does not exists.`;
         response.status(400).send(responseBody);
         return;
@@ -33,7 +33,7 @@ router.get("/:categoryId", async (request, response) => {
     const category = categoryQueryResult.data();
 
     responseBody.message = `Successfully fetched content ids for ${category.title} category`;
-    responseBody.contentIds = category.contentIds;
+    responseBody.data = category.contentIds;
     response.status(200).send(responseBody);
 
 });

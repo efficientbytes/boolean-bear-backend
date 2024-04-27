@@ -32,6 +32,11 @@ router.get("/:contentId/play-details", async (request, response) => {
     const contentId = request.params.contentId || null;
 
     const responseBody = {
+        data: null,
+        message: null
+    }
+
+    responseBody.data = {
         contentId: null,
         title: null,
         description: null,
@@ -48,7 +53,6 @@ router.get("/:contentId/play-details", async (request, response) => {
         nextSuggestion: null,
         hashTags: null,
         mentionedLinkIds: null,
-        message: null
     }
 
     if (contentId == null) {
@@ -90,22 +94,22 @@ router.get("/:contentId/play-details", async (request, response) => {
         const video = videoSnapshot.data();
         const instructor = instructorSnapshot.data();
 
-        responseBody.contentId = contentId;
-        responseBody.title = content.title;
-        responseBody.description = content.description;
-        responseBody.createdOn = content.createdOn._seconds;
-        responseBody.updatedOn = content.updatedOn._seconds;
-        responseBody.instructorId = instructor.instructorId;
-        responseBody.showAds = content.showAds;
-        responseBody.language = video.language;
-        responseBody.runTime = video.runTime;
-        responseBody.type1Thumbnail = video.type1Thumbnail;
-        responseBody.instructorFirstName = instructor.firstName;
-        responseBody.instructorLastName = instructor.lastName;
-        responseBody.instructorProfilePic = instructor.profilePic;
-        responseBody.nextSuggestion = content.nextSuggestedContentId;
-        responseBody.hashTags = content.hashTags;
-        responseBody.mentionedLinkIds = content.mentionedLinkIds;
+        responseBody.data.contentId = contentId;
+        responseBody.data.title = content.title;
+        responseBody.data.description = content.description;
+        responseBody.data.createdOn = content.createdOn._seconds;
+        responseBody.data.updatedOn = content.updatedOn._seconds;
+        responseBody.data.instructorId = instructor.instructorId;
+        responseBody.data.showAds = content.showAds;
+        responseBody.data.language = video.language;
+        responseBody.data.runTime = video.runTime;
+        responseBody.data.type1Thumbnail = video.type1Thumbnail;
+        responseBody.data.instructorFirstName = instructor.firstName;
+        responseBody.data.instructorLastName = instructor.lastName;
+        responseBody.data.instructorProfilePic = instructor.profilePic;
+        responseBody.data.nextSuggestion = content.nextSuggestedContentId;
+        responseBody.data.hashTags = content.hashTags;
+        responseBody.data.mentionedLinkIds = content.mentionedLinkIds;
         responseBody.message = "Successfully fetched content details";
 
         response.status(200).send(responseBody);

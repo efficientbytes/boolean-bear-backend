@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get("/", async (request, response) => {
     const responseBody = {
-        banners: null,
+        data: null,
         message: null
     }
 
@@ -42,7 +42,7 @@ router.get("/", async (request, response) => {
 
     });
 
-    responseBody.banners = list;
+    responseBody.data = list;
     responseBody.message = `Successfully fetched all the banner ads`
     response.status(200).send(responseBody);
 
