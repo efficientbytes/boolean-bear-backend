@@ -125,7 +125,7 @@ router.get("/:contentId/play-link", async (request, response) => {
     const contentId = request.params.contentId || null;
 
     const responseBody = {
-        playUrl: null,
+        data: null,
         message: null
     }
 
@@ -152,12 +152,11 @@ router.get("/:contentId/play-link", async (request, response) => {
 
     try {
         const signedUrl = generateSignedUrl(videoId, 10);
-        responseBody.playUrl = signedUrl;
+        responseBody.data = signedUrl;
         responseBody.message = `Successfully fetched play url`;
         response.status(200).send(responseBody);
     } catch (error) {
         logger.error(`get-content-play-url||failed||http||error is ${error.message}`);
-        responseBody.playUrl = null;
         responseBody.message = error.message;
         response.status(500).send(responseBody);
     }

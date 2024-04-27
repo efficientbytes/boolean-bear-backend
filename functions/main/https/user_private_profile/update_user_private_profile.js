@@ -38,9 +38,8 @@ router.post("/", async (request, response) => {
     const universityName = request.body.universityName || null;
 
     const responseBody = {
-        userProfile: null,
+        data: null,
         message: null,
-        signOut: false,
     };
 
     const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
@@ -58,20 +57,17 @@ router.post("/", async (request, response) => {
         })
         .then((result) => {
             responseBody.message = "User profile has been updated.";
-            responseBody.signOut = false;
         })
         .catch((error) => {
             logger.error(`update-user-private-profile||failed||http||error is ${error.message}`);
-            responseBody.userProfile = null;
             responseBody.message = `User profile could not be updated. Error is ${error.message}`;
-            responseBody.signOut = false;
             response.status(500).send(responseBody);
         });
 
     const updatedUserProfileSnapshot = await userProfileRef.get();
     const userProfile = updatedUserProfileSnapshot.data();
 
-    responseBody.userProfile = {
+    responseBody.data = {
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
         emailAddress: userProfile.emailAddress,

@@ -5,18 +5,24 @@ const admin = require("firebase-admin");
 router.post("/", async (request, response) => {
     const phoneNumber = request.body.phoneNumber || null;
     const responseBody = {
-        token: null,
-        basicProfileDetailsUpdated: false,
+        data: null,
         message: null,
-        userAccountId: null,
-        singleDeviceLogin: null,
     };
 
+    responseBody.data = {
+        userAccountId: null,
+        singleDeviceLogin: null,
+        basicProfileDetailsUpdated: false,
+        token: null,
+    }
+
+    responseBody.data.singleDeviceLogin = {
+        deviceId: null,
+        createdOn: null,
+    }
+
     if (phoneNumber == null) {
-        responseBody.token = null;
-        responseBody.basicProfileDetailsUpdated = false;
         responseBody.message = `Phone number is not provided`;
-        responseBody.userAccountId = null;
         response.status(400).send(responseBody);
         return;
     }
@@ -61,9 +67,6 @@ router.post("/", async (request, response) => {
             .create(userProfileData)
             .then(() => admin.auth().createCustomToken(userAccountId))
             .then(async (customToken) => {
-                responseBody.token = customToken;
-                responseBody.basicProfileDetailsUpdated = false;
-                responseBody.userAccountId = userAccountId;
 
                 //create a single device login document
                 const deviceId = `DID${uuidv4()}`;
@@ -91,7 +94,6 @@ router.post("/", async (request, response) => {
                     });
 
                 if (result !== true) {
-                    responseBody.singleDeviceLogin = null;
                     response.status(400).send(responseBody);
                     return;
                 }
@@ -99,18 +101,16 @@ router.post("/", async (request, response) => {
                 const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
 
                 if (!singleDeviceLoginSnapshot.exists) {
-                    responseBody.singleDeviceLogin = null;
                     responseBody.message = `Could not find device login records`;
                     response.status(400).send(responseBody);
                     return;
                 }
                 const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
 
-                responseBody.singleDeviceLogin = {
-                    deviceId: singleDeviceLoginData.deviceId,
-                    createdOn: singleDeviceLoginData.createdOn._seconds,
-                };
-
+                responseBody.data.userAccountId = userAccountId;
+                responseBody.data.token = customToken;
+                responseBody.data.singleDeviceLogin.deviceId = singleDeviceLoginData.deviceId;
+                responseBody.data.singleDeviceLogin.createdOn = singleDeviceLoginData.createdOn._seconds;
                 responseBody.message = "Signing in new user";
                 response.status(200).send(responseBody);
             });
@@ -119,10 +119,7 @@ router.post("/", async (request, response) => {
 
         const snapshot = userProfileQueryResult.docs.pop();
         if (!snapshot.exists) {
-            responseBody.token = null;
-            responseBody.basicProfileDetailsUpdated = null;
             responseBody.message = "User record not found";
-            responseBody.userAccountId = null;
             response.status(400).send(responseBody);
             return;
         }
@@ -134,14 +131,11 @@ router.post("/", async (request, response) => {
         const profession = userProfile.profession;
 
         if (firstName == null || emailAddress == null || profession == null) {
-            responseBody.basicProfileDetailsUpdated = false;
+            responseBody.data.basicProfileDetailsUpdated = false;
         } else {
-            responseBody.basicProfileDetailsUpdated = true;
+            responseBody.data.basicProfileDetailsUpdated = true;
         }
 
-        responseBody.userAccountId = userAccountId;
-        responseBody.token = await admin.auth().createCustomToken(userAccountId);
-        responseBody.message = `Sign in token generated successfully`;
         //create a single device login document
         const deviceId = `DID${uuidv4()}`;
 
@@ -166,7 +160,6 @@ router.post("/", async (request, response) => {
             });
 
         if (result !== true) {
-            responseBody.singleDeviceLogin = null;
             response.status(400).send(responseBody);
             return;
         }
@@ -174,18 +167,16 @@ router.post("/", async (request, response) => {
         const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
 
         if (!singleDeviceLoginSnapshot.exists) {
-            responseBody.singleDeviceLogin = null;
             responseBody.message = `Could not find device login records`;
             response.status(400).send(responseBody);
             return;
         }
         const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
 
-        responseBody.singleDeviceLogin = {
-            deviceId: singleDeviceLoginData.deviceId,
-            createdOn: singleDeviceLoginData.createdOn._seconds,
-        };
-
+        responseBody.data.token = await admin.auth().createCustomToken(userAccountId);
+        responseBody.data.userAccountId = userAccountId;
+        responseBody.data.singleDeviceLogin.deviceId = singleDeviceLoginData.deviceId;
+        responseBody.data.singleDeviceLogin.createdOn = singleDeviceLoginData.createdOn._seconds;
         responseBody.message = "Signing in new user";
         response.status(200).send(responseBody);
     }

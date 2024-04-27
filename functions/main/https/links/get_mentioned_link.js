@@ -31,7 +31,7 @@ router.get("/:linkId", async (request, response) => {
     const mentionedLinkId = request.params.linkId || null;
 
     const responseBody = {
-        mentionedLink: null,
+        data: null,
         message: null,
     };
 
@@ -52,7 +52,7 @@ router.get("/:linkId", async (request, response) => {
     }
 
     const mentionedLink = mentionedLinkSnapshot.data();
-    responseBody.mentionedLink = {
+    responseBody.data = {
         linkId: mentionedLinkId,
         link: mentionedLink.link,
         createdOn: mentionedLink.createdOn._seconds,

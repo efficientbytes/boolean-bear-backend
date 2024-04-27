@@ -7,17 +7,18 @@ router.get("/:contentId", async (request, response) => {
     const contentId = request.params.contentId || null;
     const viewType = request.query.viewType || "YOUTUBE";
 
-    const youtubeContentView = {
+    const shuffledContent = {
         contentId: null,
         title: null,
         instructorName: null,
         createdOn: null,
         runTime: null,
         thumbnail: null,
+        hashTags: null
     }
 
     const responseBody = {
-        youtubeContentView: null,
+        data: null,
         message: null
     }
 
@@ -66,14 +67,15 @@ router.get("/:contentId", async (request, response) => {
                 fullName = fullName + " " + instructor.lastName;
             }
 
-            youtubeContentView.contentId = contentId;
-            youtubeContentView.title = content.title;
-            youtubeContentView.createdOn = content.createdOn._seconds;
-            youtubeContentView.instructorName = fullName;
-            youtubeContentView.runTime = video.runTime;
-            youtubeContentView.thumbnail = video.type1Thumbnail;
+            shuffledContent.contentId = contentId;
+            shuffledContent.title = content.title;
+            shuffledContent.createdOn = content.createdOn._seconds;
+            shuffledContent.instructorName = fullName;
+            shuffledContent.runTime = video.runTime;
+            shuffledContent.thumbnail = video.type1Thumbnail;
+            shuffledContent.hashTags = content.hashTags;
 
-            responseBody.youtubeContentView = youtubeContentView;
+            responseBody.data = shuffledContent;
             responseBody.message = `Successfully fetched content`;
 
             response.status(200).send(responseBody);

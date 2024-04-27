@@ -31,7 +31,7 @@ router.get("/:instructorId", async (request, response) => {
     const instructorId = request.params.instructorId || null;
 
     const responseBody = {
-        instructorProfile: null,
+        data: null,
         message: null,
     };
 
@@ -52,7 +52,7 @@ router.get("/:instructorId", async (request, response) => {
     }
 
     const instructorProfile = instructorProfileSnapshot.data();
-    responseBody.instructorProfile = {
+    responseBody.data = {
         instructorId: instructorProfile.instructorId,
         firstName: instructorProfile.firstName,
         lastName: instructorProfile.lastName,

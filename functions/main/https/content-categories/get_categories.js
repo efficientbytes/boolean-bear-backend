@@ -7,7 +7,7 @@ router.get("/", async (request, response) => {
 
     const responseBody = {
         message: null,
-        categoryList: null
+        data: null
     };
 
     if (type === "shuffled") {
@@ -21,7 +21,7 @@ router.get("/", async (request, response) => {
 
             if (categoriesResult.empty) {
                 responseBody.message = `There are no categories`;
-                responseBody.categoryList = null;
+                responseBody.data = null;
                 response.status(404).send(responseBody);
                 return;
             }
@@ -50,13 +50,13 @@ router.get("/", async (request, response) => {
             }
 
             responseBody.message = `Successfully fetched all content categories`;
-            responseBody.categoryList = categoriesList;
+            responseBody.data = categoriesList;
             response.status(200).send(responseBody);
 
         } catch (error) {
             logger.error(`get-categories||failed||http||shuffled||error is ${error.message}`);
             responseBody.message = error.message;
-            responseBody.categoryList = null;
+            responseBody.data = null;
             response.status(500).send(responseBody);
         }
 
@@ -74,7 +74,7 @@ router.get("/", async (request, response) => {
 
             if (categoriesResult.empty) {
                 responseBody.message = `There are no categories`;
-                responseBody.categoryList = null;
+                responseBody.data = null;
                 response.status(404).send(responseBody);
                 return;
             }
@@ -103,13 +103,13 @@ router.get("/", async (request, response) => {
             }
 
             responseBody.message = `Successfully fetched all content categories`;
-            responseBody.categoryList = categoriesList;
+            responseBody.data = categoriesList;
             response.status(200).send(responseBody);
 
         } catch (error) {
             logger.error(`get-categories||failed||http||curated||error is ${error.message}`);
             responseBody.message = error.message;
-            responseBody.categoryList = null;
+            responseBody.data = null;
             response.status(500).send(responseBody);
         }
 

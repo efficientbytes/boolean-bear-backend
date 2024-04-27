@@ -35,15 +35,12 @@ router.post("/", async (request, response) => {
     const profession = request.body.profession || 0;
 
     const responseBody = {
-        userProfile: null,
+        data: null,
         message: null,
-        signOut: true,
     };
 
     if (firstName == null || emailAddress == null) {
-        responseBody.userProfile = null;
         responseBody.message = "First name or Email address is not provided.";
-        responseBody.signOut = false;
         response.status(404).send(responseBody);
         return;
     }
@@ -60,19 +57,16 @@ router.post("/", async (request, response) => {
         })
         .then((result) => {
             responseBody.message = "User profile has been updated.";
-            responseBody.signOut = false;
         })
         .catch((error) => {
             logger.error(`update-user-private-profile-basics||failed||http||error is ${error.message}`);
-            responseBody.userProfile = null;
             responseBody.message = `User profile could not be updated. Error is ${error.message}`;
-            responseBody.signOut = false;
             response.status(500).send(responseBody);
         });
 
     const updatedUserProfileSnapshot = await userProfileRef.get();
     const userProfile = updatedUserProfileSnapshot.data();
-    responseBody.userProfile = {
+    responseBody.data = {
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
         emailAddress: userProfile.emailAddress,
