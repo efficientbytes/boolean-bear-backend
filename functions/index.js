@@ -91,6 +91,10 @@ const deleteFCMToken = require("./main/https/user_private_profile/delete_fcm_tok
 app.use("/user/notification/token/delete", deleteFCMToken);
 const deleteAccountAppLink = require("./main/https/app-link/delete-account-app-link");
 app.use("/account/delete/", deleteAccountAppLink);
+/*const createCuratedTopics = require("./main/https/courses/create_courses");
+app.use("/admin/content/curated-topics/upload", createCuratedTopics);*/
+const createTopics = require("./main/https/courses/create-topics");
+app.use("/admin/content/topics/upload", createTopics);
 
 
 setGlobalOptions({maxInstances: 10});
