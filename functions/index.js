@@ -91,11 +91,12 @@ const deleteFCMToken = require("./main/https/user_private_profile/delete_fcm_tok
 app.use("/user/notification/token/delete", deleteFCMToken);
 const deleteAccountAppLink = require("./main/https/app-link/delete-account-app-link");
 app.use("/account/delete/", deleteAccountAppLink);
-const createTopics = require("./main/https/courses/create-topics");
+const createTopics = require("./main/https/courses/create_topics");
 app.use("/admin/contents/topics/upload", createTopics);
 const createCourses = require("./main/https/courses/create_courses");
 app.use("/admin/contents/topics/courses/upload", createCourses);
-
+const getAllTopic = require("./main/https/courses/get_all_topics");
+app.use("/contents/topic/all", getAllTopic);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
