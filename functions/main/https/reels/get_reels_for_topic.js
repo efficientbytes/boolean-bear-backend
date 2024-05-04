@@ -2,7 +2,7 @@ const admin = require("firebase-admin");
 const express = require("express");
 const router = express.Router();
 
-const asyncFunction = async (reel) => {
+const asyncFunction = async (reel, topicId) => {
     const reelData = reel.data();
     const videoId = reelData.videoId;
     const instructorId = reelData.instructorId;
@@ -36,6 +36,7 @@ const asyncFunction = async (reel) => {
             runTime: videoData.runTime,
             thumbnail: videoData.type1Thumbnail,
             hashTags: reelData.hashTags,
+            topicId: topicId,
         };
     } catch (error) {
         return null;
@@ -83,7 +84,7 @@ router.get("/:topicId", async (request, response) => {
     const reelSnapshots = reelsQueryResult.docs;
     const list = [];
 
-    const asyncTasks = reelSnapshots.map(asyncFunction);
+    const asyncTasks = reelSnapshots.map(reel => asyncFunction(reel, topicId));
 
     const reelFetchResult = await Promise.all(asyncTasks)
         .then((responses) => {
