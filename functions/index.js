@@ -100,7 +100,9 @@ app.use("/explore-topics/courses", getExploreTopicViewCourseData);
 const getAllReelTopics = require("./main/https/reels/get_all_reel_topics");
 app.use("/reels/topics", getAllReelTopics);
 const getReelsForTopic = require("./main/https/reels/get_reels_for_topic");
-app.use("/reels/topics", getReelsForTopic);
+app.use("/reels", getReelsForTopic);
+const getReelDetails = require("./main/https/reels/get_reel_details");
+app.use("/reels", getReelDetails);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
