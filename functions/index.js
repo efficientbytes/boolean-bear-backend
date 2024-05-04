@@ -53,8 +53,6 @@ const requestSupport = require("./main/https/feedback_n_support/request_support"
 app.use("/app/contact-support", requestSupport);
 const deleteUserProfile = require("./main/https/authentication/delete_user_account");
 app.use("/user/delete-account", deleteUserProfile);
-const createContentCategories = require("./main/https/content-categories/create_content_categories");
-app.use("/admin/contents/categories/upload", createContentCategories);
 const getCategories = require("./main/https/content-categories/get_categories");
 app.use("/categories", getCategories);
 const uploadVideo = require("./main/https/videos/upload_video");
@@ -97,6 +95,8 @@ const createCourses = require("./main/https/courses/create_courses");
 app.use("/admin/contents/topics/courses/upload", createCourses);
 const getAllTopic = require("./main/https/courses/get_all_topics");
 app.use("/contents/topic/all", getAllTopic);
+const getExploreTopicViewCourseData = require("./main/https/courses/get_explore_topic_view_courses");
+app.use("/explore-topics/courses", getExploreTopicViewCourseData);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);

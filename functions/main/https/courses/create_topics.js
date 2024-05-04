@@ -3,10 +3,11 @@ const express = require("express");
 const router = express.Router();
 
 class Topic {
-    constructor(topic, description = "", topicId = null, hashTags = ["coding"], createdOn = null, updatedOn = null, type1Thumbnail = "", type2Thumbnail = "") {
+    constructor(topic, description = "", topicId = null, displayIndex = 0, hashTags = ["coding"], createdOn = null, updatedOn = null, type1Thumbnail = "", type2Thumbnail = "") {
         this.topicId = topicId;
         this.topic = topic;
         this.description = description;
+        this.displayIndex = displayIndex;
         this.hashTags = hashTags;
         this.createdOn = createdOn;
         this.updatedOn = updatedOn;
@@ -31,7 +32,7 @@ router.post("/", async (request, response) => {
         new Topic("C++"),
     ];
 
-    const topicsPath = `/ASSETS/CONTENTS/TOPICS/`;
+    const topicsPath = `/ASSETS/CURATED/TOPICS/`;
     const topicRef = admin.firestore().collection(topicsPath);
     const time = admin.firestore.FieldValue.serverTimestamp();
 
@@ -42,6 +43,7 @@ router.post("/", async (request, response) => {
                 topicId: topic.topicId,
                 topic: topic.topic,
                 description: topic.description,
+                displayIndex: topic.displayIndex,
                 hashTags: topic.hashTags,
                 type1Thumbnail: topic.type1Thumbnail,
                 type2Thumbnail: topic.type2Thumbnail,
