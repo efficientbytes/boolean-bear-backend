@@ -97,6 +97,8 @@ const createCourses = require("./main/https/courses/create_courses");
 app.use("/admin/contents/topics/courses/upload", createCourses);
 const getAllTopic = require("./main/https/courses/get_all_topics");
 app.use("/contents/topic/all", getAllTopic);
+const getExploreTopicViewCourseData = require("./main/https/courses/get_explore_topic_view_courses");
+app.use("/explore-topics/courses", getExploreTopicViewCourseData);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
