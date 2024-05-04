@@ -53,8 +53,6 @@ const requestSupport = require("./main/https/feedback_n_support/request_support"
 app.use("/app/contact-support", requestSupport);
 const deleteUserProfile = require("./main/https/authentication/delete_user_account");
 app.use("/user/delete-account", deleteUserProfile);
-const createContentCategories = require("./main/https/content-categories/create_content_categories");
-app.use("/admin/contents/categories/upload", createContentCategories);
 const getCategories = require("./main/https/content-categories/get_categories");
 app.use("/categories", getCategories);
 const uploadVideo = require("./main/https/videos/upload_video");

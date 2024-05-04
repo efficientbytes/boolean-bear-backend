@@ -56,6 +56,7 @@ router.get("/", async (request, response) => {
             topicId: topic.id,
             topic: topicData.topic,
             type1Thumbnail: topicData.type1Thumbnail,
+            displayIndex : topicData.displayIndex,
             courseList: courseList
         }
         list.push(topicResponse)
