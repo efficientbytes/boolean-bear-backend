@@ -103,6 +103,8 @@ const getReelsForTopic = require("./main/https/reels/get_reels_for_topic");
 app.use("/reels", getReelsForTopic);
 const getReelDetails = require("./main/https/reels/get_reel_details");
 app.use("/reels", getReelDetails);
+const getReelPlayLink = require("./main/https/reels/get_reel_play_link");
+app.use("/reels", getReelPlayLink);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
