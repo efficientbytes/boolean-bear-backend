@@ -97,10 +97,10 @@ const getAllTopic = require("./main/https/courses/get_all_topics");
 app.use("/contents/topic/all", getAllTopic);
 const getExploreTopicViewCourseData = require("./main/https/courses/get_explore_topic_view_courses");
 app.use("/explore-topics/courses", getExploreTopicViewCourseData);
-const getAllReelTopics = require("./main/https/reels/get_reel_topics");
+const getAllReelTopics = require("./main/https/reels/get_all_reel_topics");
 app.use("/reels/topics", getAllReelTopics);
-const getReelTopics = require("./main/https/reels/get_reel_topics");
-app.use("/reels/topics", getReelTopics);
+const getReelsForTopic = require("./main/https/reels/get_reels_for_topic");
+app.use("/reels/topics", getReelsForTopic);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
