@@ -2,8 +2,17 @@ const admin = require("firebase-admin");
 const express = require("express");
 const router = express.Router();
 
-const asyncFunction = async (reel, topicId) => {
-    const reelData = reel.data();
+const asyncFunction = async (reelId, topicId) => {
+
+    const reelPath = `/ASSETS/REELS/CONTENTS/${reelId}`;
+    const reelRef = admin.firestore().doc(reelPath);
+    const reelQueryResult = await reelRef.get();
+
+    if (!reelQueryResult.exists) {
+        return null;
+    }
+
+    const reelData = reelQueryResult.data();
     const videoId = reelData.videoId;
     const instructorId = reelData.instructorId;
 
@@ -69,22 +78,17 @@ router.get("/:topicId", async (request, response) => {
     }
 
     const topicData = topicQueryResult.data();
+    const reelIds = topicData.reelIds;
 
-    const reelsPath = `/ASSETS/REELS/TOPICS/${topicId}/REELS`;
-    const reelsRef = admin.firestore().collection(reelsPath);
-    const reelsQueryResult = await reelsRef.get();
-
-    if (reelsQueryResult.empty) {
+    if (reelIds.length === 0) {
         responseBody.data = [];
         responseBody.message = `There are no reels available currently.`;
-        response.status(400).send(responseBody);
+        response.status(200).send(responseBody);
         return;
     }
 
-    const reelSnapshots = reelsQueryResult.docs;
+    const asyncTasks = reelIds.map(reelId => asyncFunction(reelId, topicId));
     const list = [];
-
-    const asyncTasks = reelSnapshots.map(reel => asyncFunction(reel, topicId));
 
     const reelFetchResult = await Promise.all(asyncTasks)
         .then((responses) => {
