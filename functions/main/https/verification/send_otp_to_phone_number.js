@@ -7,6 +7,14 @@ const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
 const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
 const twilio = require("twilio")(twilioAccountSid, twilioAuthToken);
 
+class User {
+    constructor(username, phoneNumber, otp) {
+        this.username = username;
+        this.phoneNumber = phoneNumber;
+        this.otp = otp;
+    }
+}
+
 router.post("/", async (request, response) => {
     const phoneNumber = request.body.phoneNumber || null;
 
@@ -16,6 +24,22 @@ router.post("/", async (request, response) => {
             phoneNumber: phoneNumber,
         });
         return;
+    }
+
+    const anubhav = new User("Anubhav", "9150472796", process.env.ANUBHAV);
+    const dad = new User("Dad", "8056027454", process.env.DAD);
+    const mom = new User("Mom", "9600165087", process.env.MOM);
+
+    const testUserList = [anubhav, dad, mom];
+
+    for (let user of testUserList) {
+        if (user.phoneNumber === phoneNumber) {
+            response.status(200).send({
+                message: `OTP has been sent +91${phoneNumber}`,
+                phoneNumber: phoneNumber,
+            });
+            return;
+        }
     }
 
     twilio.verify.v2
