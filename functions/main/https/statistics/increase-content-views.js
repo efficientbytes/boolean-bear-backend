@@ -44,7 +44,7 @@ router.post("/:contentId", async (request, response) => {
 
 
     //check if content id exists
-    const contentPath = `/ASSETS/CONTENTS/FILES/${contentId}`;
+    const contentPath = `/ASSETS/REELS/CONTENTS/${contentId}`;
     const contentRef = admin.firestore().doc(contentPath);
 
     const contentQueryResult = await contentRef.get();
@@ -56,7 +56,7 @@ router.post("/:contentId", async (request, response) => {
     }
 
     //if exists
-    const viewsCollectionPath = `/STATISTICS/CONTENT-VIEWS/APP/FILES/${contentId}`;
+    const viewsCollectionPath = `/ASSETS/REELS/ANALYTICS/FILES/${contentId}`;
     const viewsCollectionRef = admin.firestore().collection(viewsCollectionPath);
 
     // Map each item to a promise that performs the asynchronous task

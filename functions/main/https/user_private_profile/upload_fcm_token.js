@@ -46,7 +46,7 @@ router.post("/", async (request, response) => {
         return;
     }
 
-    const fcmTokenPath = `/FCM-TOKEN/${userAccountId}`;
+    const fcmTokenPath = `/USER/FCM-TOKENS/FILES/${userAccountId}`;
     const fcmTokenRef = admin.firestore().doc(fcmTokenPath);
 
     const fcmTokenQuerySnapshot = await fcmTokenRef.get();

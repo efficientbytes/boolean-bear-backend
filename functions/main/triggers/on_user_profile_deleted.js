@@ -15,7 +15,7 @@ exports.onUserProfileDeleted = onDocumentDeleted(
         }
 
         const userAccountId = userProfileSnapshot.id;
-        const singleDeviceLoginPath = `/SINGLE-DEVICE-LOGIN/${userAccountId}`;
+        const singleDeviceLoginPath = `/USER/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
         await admin.firestore().doc(singleDeviceLoginPath).delete();
         await admin.auth().deleteUser(userAccountId);
     },

@@ -55,7 +55,7 @@ router.post("/", async (request, response) => {
     }
 
     //check how many times the verification was requested by this user for this particular mail address (if more than 5 don't send any new verification)
-    const primaryMailVerificationKeyPath = `/VERIFICATION/PRIMARY_MAIL/FILES/`;
+    const primaryMailVerificationKeyPath = `/USER/VERIFICATIONS/PRIMARY-MAILS/`;
     const primaryVerificationQuery = admin
         .firestore()
         .collection(primaryMailVerificationKeyPath)
@@ -71,7 +71,7 @@ router.post("/", async (request, response) => {
     }
 
     const verificationId = uuidv4();
-    const updatedPrimaryMailVerificationKeyPath = `/VERIFICATION/PRIMARY_MAIL/FILES/${verificationId}`;
+    const updatedPrimaryMailVerificationKeyPath = `/USER/VERIFICATIONS/PRIMARY-MAILS/${verificationId}`;
     const primaryMailVerificationRef = admin
         .firestore()
         .doc(updatedPrimaryMailVerificationKeyPath);
