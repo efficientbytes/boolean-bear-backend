@@ -96,7 +96,7 @@ function generateSignedUrl(
 }
 
 
-router.get("/:topicId/:reelId/play-link", async (request, response) => {
+router.get("/:reelId/play-link", async (request, response) => {
     if (
         !request.headers.authorization ||
         !request.headers.authorization.startsWith("Bearer ")
@@ -121,19 +121,11 @@ router.get("/:topicId/:reelId/play-link", async (request, response) => {
         response.status(401).send({message: `Invalid auth token`});
         return;
     }
-
-    const topicId = request.params.topicId || null;
     const reelId = request.params.reelId || null;
 
     const responseBody = {
         data: null,
         message: null
-    }
-
-    if (topicId == null) {
-        responseBody.message = `Topic id is not provided.`;
-        response.status(400).send(responseBody);
-        return;
     }
 
     if (reelId == null) {
@@ -142,7 +134,7 @@ router.get("/:topicId/:reelId/play-link", async (request, response) => {
         return;
     }
 
-    const reelPath = `/ASSETS/REELS/TOPICS/${topicId}/REELS/${reelId}`;
+    const reelPath = `/ASSETS/REELS/CONTENTS/${reelId}`;
     const reelRef = admin.firestore().doc(reelPath);
     const reelQueryResult = await reelRef.get();
 

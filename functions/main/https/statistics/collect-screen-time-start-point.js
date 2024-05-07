@@ -28,7 +28,7 @@ router.post("/", async (request, response) => {
         return;
     }
 
-    const screenTimingCollectionPath = `/STATISTICS/SCREEN-TIMING/APP/FILES/${userAccountId}`;
+    const screenTimingCollectionPath = `/USER/ANALYTICS/APP/SCREEN-TIMINGS/${userAccountId}`;
     const screenTimingCollectionRef = admin.firestore().collection(screenTimingCollectionPath);
 
     // Map each item to a promise that performs the asynchronous task

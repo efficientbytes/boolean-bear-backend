@@ -122,7 +122,7 @@ router.get("/", async (request, response) => {
     //check if the emailId in the mail is same as the email id in the verification document
 
     const verificationId = verificationKey.substring(3);
-    const primaryMailVerificationKeyPath = `/VERIFICATION/PRIMARY_MAIL/FILES/${verificationId}`;
+    const primaryMailVerificationKeyPath = `/USER/VERIFICATIONS/PRIMARY-MAILS/${verificationId}`;
     const primaryMailVerificationRef = admin
         .firestore()
         .doc(primaryMailVerificationKeyPath);

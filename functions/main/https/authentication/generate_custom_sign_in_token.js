@@ -76,7 +76,7 @@ router.post("/", async (request, response) => {
                     createdOn: admin.firestore.FieldValue.serverTimestamp(),
                 };
 
-                const singleDeviceLoginPath = `/SINGLE-DEVICE-LOGIN/${userAccountId}`;
+                const singleDeviceLoginPath = `/USER/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
                 const singleDeviceLoginRef = admin
                     .firestore()
                     .doc(singleDeviceLoginPath);
@@ -144,7 +144,7 @@ router.post("/", async (request, response) => {
             createdOn: admin.firestore.FieldValue.serverTimestamp(),
         };
 
-        const singleDeviceLoginPath = `/SINGLE-DEVICE-LOGIN/${userAccountId}`;
+        const singleDeviceLoginPath = `/USER/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
         const singleDeviceLoginRef = admin.firestore().doc(singleDeviceLoginPath);
 
         //upload the document
