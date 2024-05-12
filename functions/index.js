@@ -83,8 +83,7 @@ const createCourses = require("./main/https/courses/create_courses");
 app.use("/admin/contents/topics/courses/upload", createCourses);
 const getAllTopic = require("./main/https/courses/get_all_topics");
 app.use("/contents/topic/all", getAllTopic);
-const getExploreTopicViewCourseData = require("./main/https/courses/get_explore_topic_view_courses");
-app.use("/discover-topics/courses", getExploreTopicViewCourseData);
+
 //reels related
 const getAllReelTopics = require("./main/https/reels/get_all_reel_topics");
 app.use("/reels/topics", getAllReelTopics);
@@ -94,6 +93,10 @@ const getReelDetails = require("./main/https/reels/get_reel_details");
 app.use("/reels", getReelDetails);
 const getReelPlayLink = require("./main/https/reels/get_reel_play_link");
 app.use("/reels", getReelPlayLink);
+
+//course related
+const getCourseBundle = require("./main/https/courses/get_course_bundle");
+app.use("/courses/course-bundle", getCourseBundle);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
