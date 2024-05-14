@@ -89,6 +89,8 @@ const getAllReelTopics = require("./main/https/reels/get_all_reel_topics");
 app.use("/reels/topics", getAllReelTopics);
 const getReelsForTopic = require("./main/https/reels/get_reels_for_topic");
 app.use("/reels/topics", getReelsForTopic);
+const getReelTopicDetails = require("./main/https/reels/get_reel_topic_detail");
+app.use("/reels/topics", getReelTopicDetails);
 const getReelDetails = require("./main/https/reels/get_reel_details");
 app.use("/reels", getReelDetails);
 const getReelPlayLink = require("./main/https/reels/get_reel_play_link");
