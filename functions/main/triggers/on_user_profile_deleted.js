@@ -2,9 +2,6 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const {onDocumentDeleted} = require("firebase-functions/v2/firestore");
 // @ts-ignore
-const {setGlobalOptions} = require("firebase-functions/v2");
-
-setGlobalOptions({maxInstances: 10});
 exports.onUserProfileDeleted = onDocumentDeleted(
     "/USER/PRIVATE-PROFILE/FILES/{userAccountId}",
     async (event) => {

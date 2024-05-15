@@ -101,6 +101,8 @@ const getCourseBundle = require("./main/https/courses/get_course_bundle");
 app.use("/courses/course-bundle", getCourseBundle);
 const joinCourseWaitingList = require("./main/https/courses/join_course_waiting_list");
 app.use("/courses/", joinCourseWaitingList);
+const getWaitingListCourses = require("./main/https/courses/get_waiting_list_courses");
+app.use("/user/courses/waiting-list", getWaitingListCourses);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
@@ -110,3 +112,5 @@ const onUserProfileUpdated = require("./main/triggers/on_user_profile_updated");
 exports.onUserProfileUpdated = onUserProfileUpdated;
 const onUserProfileDeleted = require("./main/triggers/on_user_profile_deleted");
 exports.onUserProfileDeleted = onUserProfileDeleted;
+const onUserJoinedCourseWaitingList = require("./main/triggers/on_user_registered_course_waiting_list");
+exports.onUserJoinedCourseWaitingList = onUserJoinedCourseWaitingList;
