@@ -110,3 +110,5 @@ const onUserProfileUpdated = require("./main/triggers/on_user_profile_updated");
 exports.onUserProfileUpdated = onUserProfileUpdated;
 const onUserProfileDeleted = require("./main/triggers/on_user_profile_deleted");
 exports.onUserProfileDeleted = onUserProfileDeleted;
+const onUserJoinedCourseWaitingList = require("./main/triggers/on_user_registered_course_waiting_list");
+exports.onUserJoinedCourseWaitingList = onUserJoinedCourseWaitingList;
