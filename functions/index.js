@@ -99,6 +99,8 @@ app.use("/reels", getReelPlayLink);
 //course related
 const getCourseBundle = require("./main/https/courses/get_course_bundle");
 app.use("/courses/course-bundle", getCourseBundle);
+const joinCourseWaitingList = require("./main/https/courses/join_course_waiting_list");
+app.use("/courses/", joinCourseWaitingList);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
