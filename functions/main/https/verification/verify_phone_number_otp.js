@@ -48,6 +48,11 @@ router.post("/", async (request, response) => {
                 phoneNumber: phoneNumber,
             });
             return;
+        } else if (user.phoneNumber === phoneNumber && user.otp !== otp) {
+            response.status(400).send({
+                message: `Verification failed`,
+                phoneNumber: phoneNumber,
+            });
         }
     }
 
