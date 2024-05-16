@@ -104,6 +104,10 @@ app.use("/courses/", joinCourseWaitingList);
 const getWaitingListCourses = require("./main/https/courses/get_waiting_list_courses");
 app.use("/user/courses/waiting-list", getWaitingListCourses);
 
+//verification
+const getModeOfLogin = require("./main/https/verification/get_mode_of_login");
+app.use("/verification/login-mode", getModeOfLogin);
+
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
 
