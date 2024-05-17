@@ -23,8 +23,6 @@ const sendOtpToPhoneNumber = require("./main/https/verification/send_otp_to_phon
 app.use("/verification/phone-number/send-otp", sendOtpToPhoneNumber);
 const verifyPhoneNumberOtp = require("./main/https/verification/verify_phone_number_otp");
 app.use("/verification/phone-number/verify-otp", verifyPhoneNumberOtp);
-const generateCustomSignInToken = require("./main/https/authentication/generate_custom_sign_in_token");
-app.use("/user/sign-in", generateCustomSignInToken);
 const updateUserPrivateProfileBasicDetails = require("./main/https/user_private_profile/update_user_private_profile_basic_details");
 app.use(
     "/user/profile/update/basic-details",
@@ -107,6 +105,11 @@ app.use("/user/courses/waiting-list", getWaitingListCourses);
 //verification
 const getModeOfLogin = require("./main/https/verification/get_mode_of_login");
 app.use("/verification/login-mode", getModeOfLogin);
+
+
+//authentication
+const generateCustomSignInToken = require("./main/https/authentication/generate_custom_sign_in_token");
+app.use("/user/sign-in", generateCustomSignInToken);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);

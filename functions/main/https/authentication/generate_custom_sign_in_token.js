@@ -14,6 +14,7 @@ router.post("/", async (request, response) => {
         singleDeviceLogin: null,
         basicProfileDetailsUpdated: false,
         token: null,
+        passwordCreated: null
     }
 
     responseBody.data.singleDeviceLogin = {
@@ -109,6 +110,7 @@ router.post("/", async (request, response) => {
 
                 responseBody.data.userAccountId = userAccountId;
                 responseBody.data.token = customToken;
+                responseBody.data.passwordCreated = false;
                 responseBody.data.singleDeviceLogin.deviceId = singleDeviceLoginData.deviceId;
                 responseBody.data.singleDeviceLogin.createdOn = singleDeviceLoginData.createdOn._seconds;
                 responseBody.message = "Signing in new user";
@@ -173,8 +175,14 @@ router.post("/", async (request, response) => {
         }
         const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
 
+        const passwordPath = `/USER/PASSWORDS/FILES/${userAccountId}`;
+        const passwordRef = admin.firestore().doc(passwordPath);
+        const passwordQueryResult = await passwordRef.get();
+        const passwordCreated = passwordQueryResult.exists;
+
         responseBody.data.token = await admin.auth().createCustomToken(userAccountId);
         responseBody.data.userAccountId = userAccountId;
+        responseBody.data.passwordCreated = passwordCreated;
         responseBody.data.singleDeviceLogin.deviceId = singleDeviceLoginData.deviceId;
         responseBody.data.singleDeviceLogin.createdOn = singleDeviceLoginData.createdOn._seconds;
         responseBody.message = "Signing in new user";
