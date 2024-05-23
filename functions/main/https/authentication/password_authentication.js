@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const admin = require("firebase-admin");
-const {logger} = require("firebase-functions");
 const bcrypt = require("bcrypt");
 
 function validatePassword(password) {
