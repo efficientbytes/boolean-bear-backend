@@ -7,7 +7,8 @@ const router = express.Router();
 
 router.post("/", async (request, response) => {
     const userAccountId = request.body.userAccountId || null;
-    const completePhoneNumber = request.body.completePhoneNumber || null;
+    const prefix = request.body.prefix || null;
+    const phoneNumber = request.body.phoneNumber || null;
     const category = request.body.category || null;
     const title = request.body.title || null;
     const description = request.body.description || null;
@@ -33,7 +34,7 @@ router.post("/", async (request, response) => {
         priority: 0,
         status: "OPEN",
         userAccountId: userAccountId,
-        completePhoneNumber: completePhoneNumber,
+        completePhoneNumber: `${prefix}${phoneNumber}`,
         dateCreated: currentTime,
         dateUpdated: currentTime,
         resolution: null,

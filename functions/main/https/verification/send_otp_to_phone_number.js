@@ -16,13 +16,29 @@ class User {
 }
 
 router.post("/", async (request, response) => {
+
     const phoneNumber = request.body.phoneNumber || null;
+    const prefix = request.body.prefix || null;
+
+    const responseBody = {
+        data: null,
+        message: null,
+    }
+
+    responseBody.data = {
+        prefix: null,
+        phoneNumber: null
+    }
 
     if (phoneNumber == null) {
-        response.status(400).send({
-            message: `Phone number is not provided`,
-            phoneNumber: phoneNumber,
-        });
+        responseBody.message = `Phone number is not provided.`;
+        response.status(400).send(responseBody);
+        return;
+    }
+
+    if (prefix == null) {
+        responseBody.message = `Prefix is not provided.`;
+        response.status(400).send(responseBody);
         return;
     }
 
@@ -34,32 +50,29 @@ router.post("/", async (request, response) => {
 
     for (let user of testUserList) {
         if (user.phoneNumber === phoneNumber) {
-            response.status(200).send({
-                message: `OTP has been sent +91${phoneNumber}`,
-                phoneNumber: phoneNumber,
-            });
+            responseBody.message = `OTP has been sent ${prefix}${phoneNumber}`;
+            responseBody.data.prefix = prefix;
+            responseBody.data.phoneNumber = phoneNumber;
+            response.status(200).send(responseBody);
             return;
         }
     }
 
     twilio.verify.v2
         .services(twilioServiceSid)
-        .verifications.create({to: `+91${phoneNumber}`, channel: "sms"})
+        .verifications.create({to: `${prefix}${phoneNumber}`, channel: "sms"})
         .then((verification) => {
-
             if (verification.status === "pending") {
-                response.status(200).send({
-                    message: `OTP has been sent +91${phoneNumber}`,
-                    phoneNumber: phoneNumber,
-                });
+                responseBody.message = `OTP has been sent ${prefix}${phoneNumber}`;
+                responseBody.data.prefix = prefix;
+                responseBody.data.phoneNumber = phoneNumber;
+                response.status(200).send(responseBody);
             }
         })
         .catch((error) => {
             logger.error(`send-otp-to-phone-number||failed||http||error is ${error.message}`);
-            response.status(503).send({
-                message: `Verification error identifier ${error.code}`,
-                phoneNumber: phoneNumber,
-            });
+            responseBody.message = `Verification error identifier ${error.code}`;
+            response.status(503).send(responseBody);
         });
 });
 
