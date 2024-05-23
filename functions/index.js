@@ -103,13 +103,20 @@ const getWaitingListCourses = require("./main/https/courses/get_waiting_list_cou
 app.use("/user/courses/waiting-list", getWaitingListCourses);
 
 //verification
-const getModeOfLogin = require("./main/https/verification/get_mode_of_login");
-app.use("/verification/login-mode", getModeOfLogin);
 
 
 //authentication
+const getModeOfLogin = require("./main/https/verification/get_mode_of_login");
+app.use("/verification/login-mode", getModeOfLogin);
 const generateCustomSignInToken = require("./main/https/authentication/generate_custom_sign_in_token");
 app.use("/user/sign-in", generateCustomSignInToken);
+const createAccountPassword = require("./main/https/authentication/create_account_password");
+app.use("/user/account/password/create", createAccountPassword);
+const updateAccountPassword = require("./main/https/authentication/update_account_password");
+app.use("/user/account/password/update", updateAccountPassword);
+const passwordAuthentication = require("./main/https/authentication/password_authentication");
+app.use("/user/sign-in/password", passwordAuthentication);
+
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
