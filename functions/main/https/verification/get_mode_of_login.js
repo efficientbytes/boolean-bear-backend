@@ -16,7 +16,7 @@ class User {
     }
 }
 
-const sendOtp = async (phoneNumber, response, responseBody) => {
+const sendOtp = async (prefix, phoneNumber, response, responseBody) => {
 
     const anubhav = new User("Anubhav", "9150472796", process.env.ANUBHAV);
     const dad = new User("Dad", "8056027454", process.env.DAD);
@@ -26,9 +26,10 @@ const sendOtp = async (phoneNumber, response, responseBody) => {
 
     for (let user of testUserList) {
         if (user.phoneNumber === phoneNumber) {
-            responseBody.data.phoneNumber = phoneNumber;
+            responseBody.data.phoneNumberData.prefix = prefix;
+            responseBody.data.phoneNumberData.phoneNumber = phoneNumber;
             responseBody.data.mode = 0;
-            responseBody.message = `OTP has been sent to +91${phoneNumber}`;
+            responseBody.message = `OTP has been sent to ${prefix}${phoneNumber}`;
             response.status(200).send(responseBody);
             return;
         }
@@ -36,20 +37,22 @@ const sendOtp = async (phoneNumber, response, responseBody) => {
 
     twilio.verify.v2
         .services(twilioServiceSid)
-        .verifications.create({to: `+91${phoneNumber}`, channel: "sms"})
+        .verifications.create({to: `${prefix}${phoneNumber}`, channel: "sms"})
         .then((verification) => {
 
             if (verification.status === "pending") {
-                responseBody.data.phoneNumber = phoneNumber;
+                responseBody.data.phoneNumberData.prefix = prefix;
+                responseBody.data.phoneNumberData.phoneNumber = phoneNumber;
                 responseBody.data.mode = 0;
-                responseBody.message = `OTP has been sent to +91${phoneNumber}`;
+                responseBody.message = `OTP has been sent to ${prefix}${phoneNumber}`;
                 response.status(200).send(responseBody);
             }
 
         })
         .catch((error) => {
             logger.error(`get-mode-of-login||failed||http||error is ${error.message}`);
-            responseBody.data.phoneNumber = phoneNumber;
+            responseBody.data.phoneNumberData.prefix = prefix;
+            responseBody.data.phoneNumberData.phoneNumber = phoneNumber;
             responseBody.data.mode = 0;
             responseBody.message = `Verification error identifier ${error.code}`;
             response.status(503).send(responseBody);
@@ -68,14 +71,24 @@ router.post("/", async (request, response) => {
     };
 
     responseBody.data = {
-        phoneNumber: null,
-        prefix: null,
+        phoneNumberData: null,
         userAccountId: null,
         mode: -1,
     }
 
+    responseBody.data.phoneNumberData = {
+        phoneNumber: null,
+        prefix: null,
+    }
+
     if (phoneNumber == null) {
         responseBody.message = `Phone number is not provided`;
+        response.status(400).send(responseBody);
+        return;
+    }
+
+    if (prefix == null) {
+        responseBody.message = `Prefix is not provided`;
         response.status(400).send(responseBody);
         return;
     }
@@ -85,12 +98,12 @@ router.post("/", async (request, response) => {
         .firestore()
         .collection(userProfilePath)
         .where("phoneNumber", "==", phoneNumber)
-        .where("phoneNumberPrefix", "==", "+91")
+        .where("phoneNumberPrefix", "==", prefix)
         .limit(1)
         .get();
 
     if (userProfileQueryResult.empty) {
-        await sendOtp(phoneNumber, response, responseBody);
+        await sendOtp(prefix, phoneNumber, response, responseBody);
         return
     }
 
@@ -101,16 +114,17 @@ router.post("/", async (request, response) => {
 
 
     if (!passwordQueryResult.exists) {
-        await sendOtp(phoneNumber, response, responseBody);
+        await sendOtp(prefix, phoneNumber, response, responseBody);
         return
     }
 
     //password mode
     //send userAccountId
-    responseBody.data.phoneNumber = phoneNumber;
+    responseBody.data.phoneNumberData.phoneNumber = phoneNumber;
+    responseBody.data.phoneNumberData.prefix = prefix;
     responseBody.data.userAccountId = userAccountId;
     responseBody.data.mode = 1;
-    responseBody.message = `OTP has been sent to +91${phoneNumber}`;
+    responseBody.message = `OTP has been sent to ${prefix}${phoneNumber}`;
     response.status(200).send(responseBody);
 
 });
