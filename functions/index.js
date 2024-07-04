@@ -61,10 +61,6 @@ app.use("/statistics/screen-timing/app", recordUserStartingScreenTime);
 const increaseContentViews = require("./main/https/statistics/increase-content-views");
 app.use("/statistics/content-views/app", increaseContentViews);
 
-//banner ads
-const getHomePageBanners = require("./main/https/banners/get_home_page_banners");
-app.use("/ads/banners/home-page", getHomePageBanners);
-
 //reels related
 const getAllReelTopics = require("./main/https/reels/get_all_reel_topics");
 app.use("/reels/topics", getAllReelTopics);
@@ -127,8 +123,6 @@ app.use("/.well-known/assetlinks.json", appLinks);
 //admin
 const uploadVideo = require("./main/https/videos/upload_video");
 app.use("/admin/video/upload", uploadVideo);
-const uploadHomePageBanner = require("./main/https/banners/upload_home_page_banner");
-app.use("/admin/ads/banner/home-page/upload", uploadHomePageBanner);
 const createTopics = require("./main/https/courses/create_topics");
 app.use("/admin/contents/topics/upload", createTopics);
 const createCourses = require("./main/https/courses/create_courses");
