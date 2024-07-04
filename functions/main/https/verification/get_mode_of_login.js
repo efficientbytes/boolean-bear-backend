@@ -108,7 +108,7 @@ router.post("/", async (request, response) => {
     }
 
     const userAccountId = userProfileQueryResult.docs.pop().id;
-    const passwordPath = `/USER/PASSWORDS/FILES/${userAccountId}`;
+    const passwordPath = `/USERS/PASSWORDS/FILES/${userAccountId}`;
     const passwordRef = admin.firestore().doc(passwordPath);
     const passwordQueryResult = await passwordRef.get();
 

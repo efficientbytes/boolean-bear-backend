@@ -192,7 +192,7 @@ router.post("/", async (request, response) => {
         }
         const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
 
-        const passwordPath = `/USER/PASSWORDS/FILES/${userAccountId}`;
+        const passwordPath = `/USERS/PASSWORDS/FILES/${userAccountId}`;
         const passwordRef = admin.firestore().doc(passwordPath);
         const passwordQueryResult = await passwordRef.get();
         const passwordCreated = passwordQueryResult.exists;

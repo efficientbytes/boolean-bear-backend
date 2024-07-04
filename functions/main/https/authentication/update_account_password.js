@@ -77,7 +77,7 @@ router.post("/", async (request, response) => {
     }
 
     //hash the password
-    const passwordPath = `/USER/PASSWORDS/FILES/${userAccountId}`;
+    const passwordPath = `/USERS/PASSWORDS/FILES/${userAccountId}`;
     const passwordRef = admin.firestore().doc(passwordPath);
     const passwordQueryResult = await passwordRef.get();
 
