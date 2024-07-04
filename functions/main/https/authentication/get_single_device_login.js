@@ -38,7 +38,7 @@ router.get("/", async (request, response) => {
         createdOn: null,
     }
 
-    const singleDeviceLoginPath = `/USER/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
+    const singleDeviceLoginPath = `/USERS/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
     const singleDeviceLoginRef = admin.firestore().doc(singleDeviceLoginPath);
     const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
 
