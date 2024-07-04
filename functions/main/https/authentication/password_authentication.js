@@ -80,7 +80,7 @@ router.post("/", async (request, response) => {
         if (match) {
             // Password matches
 
-            const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+            const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
             const userProfileQueryRef = admin.firestore().doc(userProfilePath);
             const userProfileQueryResult = await userProfileQueryRef.get();
 

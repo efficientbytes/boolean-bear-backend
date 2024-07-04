@@ -41,7 +41,7 @@ router.post("/", async (request, response) => {
         return;
     }
 
-    const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/`;
+    const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/`;
     const userProfileQueryResult = await admin
         .firestore()
         .collection(userProfilePath)
@@ -55,7 +55,7 @@ router.post("/", async (request, response) => {
         const userAccountId = uuidv4();
         const activityId = uuidv4();
 
-        const newUserProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+        const newUserProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
         const userProfileRef = admin.firestore().doc(newUserProfilePath);
 
         const userProfileData = {
