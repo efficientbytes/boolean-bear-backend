@@ -67,7 +67,7 @@ exports.onUserProfileUpdated = onDocumentUpdated(
             const firstName = afterUpdateData.firstName;
 
             const verificationId = uuidv4();
-            const updatedPrimaryMailVerificationKeyPath = `/USER/VERIFICATIONS/PRIMARY-MAILS/${verificationId}`;
+            const updatedPrimaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/${verificationId}`;
             const primaryMailVerificationRef = admin
                 .firestore()
                 .doc(updatedPrimaryMailVerificationKeyPath);
@@ -124,7 +124,7 @@ exports.onUserProfileUpdated = onDocumentUpdated(
 
             const userAccountId = event.data.after.id;
 
-            const primaryMailVerificationKeyPath = `/USER/VERIFICATIONS/PRIMARY-MAILS/`;
+            const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/`;
             const primaryVerificationQuery = admin
                 .firestore()
                 .collection(primaryMailVerificationKeyPath)
@@ -141,7 +141,7 @@ exports.onUserProfileUpdated = onDocumentUpdated(
                 for (const snapshot of primaryVerificationQueryResult.docs) {
                     const snapshotId = snapshot.id;
                     try {
-                        const primaryMailVerificationKeyPath = `/USER/VERIFICATIONS/PRIMARY-MAILS/${snapshotId}`;
+                        const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/${snapshotId}`;
                         const primaryMailVerificationRef = admin
                             .firestore()
                             .doc(primaryMailVerificationKeyPath);
