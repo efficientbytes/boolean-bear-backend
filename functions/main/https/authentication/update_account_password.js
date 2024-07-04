@@ -99,7 +99,7 @@ router.post("/", async (request, response) => {
         } else {
             // Proceed with hashing and save it in database
             try {
-                const saltRounds = getRandomNumber(10, 18);
+                const saltRounds = 12
                 const salt = await bcrypt.genSalt(saltRounds);
                 const hashedPassword = await bcrypt.hash(password, salt);
 
