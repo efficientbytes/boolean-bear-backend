@@ -76,10 +76,12 @@ router.post("/", async (request, response) => {
         .firestore()
         .doc(updatedPrimaryMailVerificationKeyPath);
 
+    const time = admin.firestore.FieldValue.serverTimestamp();
     const verificationData = {
         key: `KEY${verificationId}`,
         userAccountId: userAccountId,
         emailAddress: emailAddress,
+        createdOn: time
     };
 
     await primaryMailVerificationRef.create(verificationData);

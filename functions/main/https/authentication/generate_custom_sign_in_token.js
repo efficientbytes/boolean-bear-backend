@@ -4,6 +4,7 @@ const {v4: uuidv4} = require("uuid");
 const admin = require("firebase-admin");
 router.post("/", async (request, response) => {
     const phoneNumber = request.body.phoneNumber || null;
+    const prefix = request.body.prefix || null;
     const responseBody = {
         data: null,
         message: null,
@@ -11,9 +12,16 @@ router.post("/", async (request, response) => {
 
     responseBody.data = {
         userAccountId: null,
-        singleDeviceLogin: null,
-        basicProfileDetailsUpdated: false,
         token: null,
+        basicProfileDetailsUpdated: false,
+        passwordCreated: null,
+        phoneNumberData: null,
+        singleDeviceLogin: null
+    }
+
+    responseBody.data.phoneNumberData = {
+        prefix: null,
+        phoneNumber: null
     }
 
     responseBody.data.singleDeviceLogin = {
@@ -27,12 +35,18 @@ router.post("/", async (request, response) => {
         return;
     }
 
+    if (prefix == null) {
+        responseBody.message = `Prefix is not provided`;
+        response.status(400).send(responseBody);
+        return;
+    }
+
     const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/`;
     const userProfileQueryResult = await admin
         .firestore()
         .collection(userProfilePath)
         .where("phoneNumber", "==", phoneNumber)
-        .where("phoneNumberPrefix", "==", "+91")
+        .where("phoneNumberPrefix", "==", prefix)
         .limit(1)
         .get();
 
@@ -49,8 +63,8 @@ router.post("/", async (request, response) => {
             lastName: null,
             emailAddress: null,
             phoneNumber: phoneNumber,
-            phoneNumberPrefix: "+91",
-            completePhoneNumber: `+91${phoneNumber}`,
+            phoneNumberPrefix: prefix,
+            completePhoneNumber: `${prefix}${phoneNumber}`,
             userAccountId: userAccountId,
             profession: null,
             linkedInUsername: null,
@@ -109,6 +123,9 @@ router.post("/", async (request, response) => {
 
                 responseBody.data.userAccountId = userAccountId;
                 responseBody.data.token = customToken;
+                responseBody.data.passwordCreated = false;
+                responseBody.data.phoneNumberData.prefix = prefix;
+                responseBody.data.phoneNumberData.phoneNumber = phoneNumber;
                 responseBody.data.singleDeviceLogin.deviceId = singleDeviceLoginData.deviceId;
                 responseBody.data.singleDeviceLogin.createdOn = singleDeviceLoginData.createdOn._seconds;
                 responseBody.message = "Signing in new user";
@@ -129,6 +146,8 @@ router.post("/", async (request, response) => {
         const firstName = userProfile.firstName;
         const emailAddress = userProfile.emailAddress;
         const profession = userProfile.profession;
+        const serverPhoneNumber = userProfile.phoneNumber;
+        const serverPrefix = userProfile.phoneNumberPrefix;
 
         if (firstName == null || emailAddress == null || profession == null) {
             responseBody.data.basicProfileDetailsUpdated = false;
@@ -173,8 +192,16 @@ router.post("/", async (request, response) => {
         }
         const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
 
+        const passwordPath = `/USER/PASSWORDS/FILES/${userAccountId}`;
+        const passwordRef = admin.firestore().doc(passwordPath);
+        const passwordQueryResult = await passwordRef.get();
+        const passwordCreated = passwordQueryResult.exists;
+
         responseBody.data.token = await admin.auth().createCustomToken(userAccountId);
         responseBody.data.userAccountId = userAccountId;
+        responseBody.data.passwordCreated = passwordCreated;
+        responseBody.data.phoneNumberData.prefix = serverPrefix;
+        responseBody.data.phoneNumberData.phoneNumber = serverPhoneNumber;
         responseBody.data.singleDeviceLogin.deviceId = singleDeviceLoginData.deviceId;
         responseBody.data.singleDeviceLogin.createdOn = singleDeviceLoginData.createdOn._seconds;
         responseBody.message = "Signing in new user";

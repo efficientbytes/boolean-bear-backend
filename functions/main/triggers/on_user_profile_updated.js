@@ -1,6 +1,12 @@
 const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
+const {v4: uuidv4} = require("uuid");
+const mailjet = require("node-mailjet").apiConnect(
+    process.env.MAIL_JET_API_KEY,
+    process.env.MAIL_JET_SECRET_KEY,
+);
+
 
 exports.onUserProfileUpdated = onDocumentUpdated(
     "/USER/PRIVATE-PROFILE/FILES/{userAccountId}",
@@ -31,18 +37,84 @@ exports.onUserProfileUpdated = onDocumentUpdated(
             logger.log(
                 `log||user account id is ${userAccountId} and email has been updated for first time.`,
             );
-            await admin
+
+            const customClaimUpdateResult = await admin
                 .auth()
                 .setCustomUserClaims(userAccountId, customClaim)
-                .then(async () => {
+                .then(() => {
                     logger.log(
                         `log||user account id is ${userAccountId} and custom claim for email verified has been set to false.`,
                     );
-                    const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
-                    await admin.firestore().doc(userProfilePath).update({
-                        lastUpdatedOn: admin.firestore.FieldValue.serverTimestamp(),
-                    });
+                    return true;
+                }).catch(() => {
+                    return false;
                 });
+
+            if (!customClaimUpdateResult) return;
+
+            const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+            const updateResult = await admin.firestore().doc(userProfilePath).update({
+                lastUpdatedOn: admin.firestore.FieldValue.serverTimestamp(),
+            }).then(() => {
+                return true;
+            }).catch(() => {
+                return false;
+            });
+
+            if (!updateResult) return;
+
+            const emailAddress = afterUpdateData.emailAddress;
+            const firstName = afterUpdateData.firstName;
+
+            const verificationId = uuidv4();
+            const updatedPrimaryMailVerificationKeyPath = `/USER/VERIFICATIONS/PRIMARY-MAILS/${verificationId}`;
+            const primaryMailVerificationRef = admin
+                .firestore()
+                .doc(updatedPrimaryMailVerificationKeyPath);
+
+            const time = admin.firestore.FieldValue.serverTimestamp();
+            const verificationData = {
+                key: `KEY${verificationId}`,
+                userAccountId: userAccountId,
+                emailAddress: emailAddress,
+                createdOn: time
+            };
+
+            await primaryMailVerificationRef.create(verificationData);
+
+            //mail creation
+            const templateId = 5772111;
+            const verificationLink = `https://verify.booleanbear.com/verification/primary-mail/verify-link?emailAddress=${emailAddress}&id=${userAccountId}&publicKey=${verificationData.key}`;
+
+            const templateData = {
+                firstName: firstName,
+                verificationLink: verificationLink,
+            };
+
+            await mailjet
+                .post("send", {version: "v3.1"})
+                .request({
+                    Messages: [
+                        {
+                            From: {
+                                Email: "donotreply@booleanbear.com",
+                                Name: "boolean bear",
+                            },
+                            To: [
+                                {
+                                    Email: emailAddress,
+                                    Name: firstName,
+                                },
+                            ],
+                            TemplateID: templateId,
+                            TemplateLanguage: true,
+                            Variables: templateData,
+                        },
+                    ],
+                }).catch((error) => {
+                    logger.error(`send-verification-link-to-primary-mail||failed||trigger||error is ${error.message}`);
+                });
+
         }
 
         const currentEmailVerifiedOn = afterUpdateData.emailVerifiedOn._nanoseconds;
