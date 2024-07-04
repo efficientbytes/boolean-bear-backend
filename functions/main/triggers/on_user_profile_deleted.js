@@ -17,7 +17,7 @@ exports.onUserProfileDeleted = onDocumentDeleted(
         await admin.auth().deleteUser(userAccountId);
         const passwordPath = `/USER/PASSWORDS/FILES/${userAccountId}`;
         await admin.firestore().doc(passwordPath).delete();
-        const fcmTokenPath = `/USER/FCM-TOKENS/FILES/${userAccountId}`;
+        const fcmTokenPath = `/USERS/FCM-TOKENS/FILES/${userAccountId}`;
         await admin.firestore().doc(fcmTokenPath).delete();
     },
 );
