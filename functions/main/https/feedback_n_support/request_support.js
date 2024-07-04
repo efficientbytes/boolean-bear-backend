@@ -22,7 +22,7 @@ router.post("/", async (request, response) => {
     const ticketIdGenerator = customAlphabet(alphabets, 10);
     const ticketId = ticketIdGenerator();
 
-    const contactSupportPath = `/CONTACT-SUPPORT/APP/FILES/`;
+    const contactSupportPath = `/SUPPORT-REQUESTS/TICKETS/FILES`;
     const contactSupportRef = admin.firestore().collection(contactSupportPath);
     const currentTime = admin.firestore.FieldValue.serverTimestamp();
 
