@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/", async (request, response) => {
-    const issueCategoryAdapterListPath = `/UTILITY/APP/ISSUE-CATEGORIES/`;
+    const issueCategoryAdapterListPath = `/UTILITIES/APP/ISSUE-CATEGORIES/`;
     const issueCategoryAdapterListPathRef = admin
         .firestore()
         .collection(issueCategoryAdapterListPath);
