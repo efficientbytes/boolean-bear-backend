@@ -45,6 +45,9 @@ router.get("/", async (request, response) => {
 
     const userProfile = userProfileSnapshot.data();
     responseBody.data = {
+        username: userProfile.username,
+        profileImage: userProfile.profileImage,
+        coverImage: userProfile.coverImage,
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
         emailAddress: userProfile.emailAddress,

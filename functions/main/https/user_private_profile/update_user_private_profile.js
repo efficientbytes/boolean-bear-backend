@@ -29,6 +29,7 @@ router.post("/", async (request, response) => {
         return;
     }
 
+    const username = request.body.username || null;
     const firstName = request.body.firstName || null;
     const lastName = request.body.lastName || null;
     const emailAddress = request.body.emailAddress || null;
@@ -47,6 +48,7 @@ router.post("/", async (request, response) => {
 
     await userProfileRef
         .update({
+            username: username,
             firstName: firstName,
             lastName: lastName,
             emailAddress: emailAddress,
@@ -68,6 +70,9 @@ router.post("/", async (request, response) => {
     const userProfile = updatedUserProfileSnapshot.data();
 
     responseBody.data = {
+        username: userProfile.username,
+        profileImage: userProfile.profileImage,
+        coverImage: userProfile.coverImage,
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
         emailAddress: userProfile.emailAddress,

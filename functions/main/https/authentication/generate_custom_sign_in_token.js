@@ -59,6 +59,9 @@ router.post("/", async (request, response) => {
         const userProfileRef = admin.firestore().doc(newUserProfilePath);
 
         const userProfileData = {
+            username: null,
+            profileImage: null,
+            coverImage: null,
             firstName: "New User",
             lastName: null,
             emailAddress: null,

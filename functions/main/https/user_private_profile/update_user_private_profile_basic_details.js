@@ -67,6 +67,9 @@ router.post("/", async (request, response) => {
     const updatedUserProfileSnapshot = await userProfileRef.get();
     const userProfile = updatedUserProfileSnapshot.data();
     responseBody.data = {
+        username: userProfile.username,
+        profileImage: userProfile.profileImage,
+        coverImage: userProfile.coverImage,
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
         emailAddress: userProfile.emailAddress,
