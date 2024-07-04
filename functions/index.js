@@ -56,8 +56,6 @@ const getMentionedLink = require("./main/https/links/get_mentioned_link");
 app.use("/mentioned-links", getMentionedLink);
 
 //analytics
-const recordUserStartingScreenTime = require("./main/https/statistics/collect-screen-time-start-point");
-app.use("/statistics/screen-timing/app", recordUserStartingScreenTime);
 const increaseContentViews = require("./main/https/statistics/increase-content-views");
 app.use("/statistics/content-views/app", increaseContentViews);
 
