@@ -29,8 +29,8 @@ router.post("/", async (request, response) => {
         showAds: true,
         nextReelId: null,
         instructorId: instructorId,
-        hashTags: ["", "", "", "", ""],
-        mentionedLinkIds: ["", "", "", "", ""],
+        hashTags: ["", "", "", "", "", "", "", "", "", ""],
+        mentionedLinkIds: ["", "", "", ""],
     }
 
     for (let i = 1; i <= parsedCount; i++) {
