@@ -34,7 +34,7 @@ router.get("/", async (request, response) => {
         message: null
     }
 
-    const userPrivateProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+    const userPrivateProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
     const userPrivateProfileRef = admin.firestore().doc(userPrivateProfilePath);
     const userPrivateProfileQueryResult = await userPrivateProfileRef.get();
 

@@ -20,7 +20,7 @@ const asyncFunction = async (reelId, topicId) => {
     const videoRef = admin.firestore().doc(videoPath);
     const videoPromise = videoRef.get();
 
-    const instructorPath = `/INSTRUCTOR/PROFILE/FILES/${instructorId}`;
+    const instructorPath = `/INSTRUCTORS/PRIVATE-PROFILES/FILES/${instructorId}`;
     const instructorRef = admin.firestore().doc(instructorPath);
     const instructorPromise = instructorRef.get();
 

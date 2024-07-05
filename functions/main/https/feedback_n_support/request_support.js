@@ -9,7 +9,8 @@ router.post("/", async (request, response) => {
     const userAccountId = request.body.userAccountId || null;
     const prefix = request.body.prefix || null;
     const phoneNumber = request.body.phoneNumber || null;
-    const category = request.body.category || null;
+    const completePhoneNumber = request.body.completePhoneNumber || null;
+    const category = request.body.category || 0;
     const title = request.body.title || null;
     const description = request.body.description || null;
 
@@ -22,19 +23,30 @@ router.post("/", async (request, response) => {
     const ticketIdGenerator = customAlphabet(alphabets, 10);
     const ticketId = ticketIdGenerator();
 
-    const contactSupportPath = `/CONTACT-SUPPORT/APP/FILES/`;
+    const contactSupportPath = `/SUPPORT-REQUESTS/TICKETS/FILES`;
     const contactSupportRef = admin.firestore().collection(contactSupportPath);
     const currentTime = admin.firestore.FieldValue.serverTimestamp();
 
+    let parsedCategory = 0
+
+    if (typeof category === 'string') {
+        const num = parseInt(category.toString(), 10);
+        if (!isNaN(num)) {
+            parsedCategory = num
+        }
+    }
+
     const requestSupport = {
         ticketId: ticketId,
-        category: category,
+        category: parsedCategory,
         title: title,
         description: description,
         priority: 0,
         status: "OPEN",
         userAccountId: userAccountId,
-        completePhoneNumber: `${prefix}${phoneNumber}`,
+        prefix: prefix,
+        phoneNumber: phoneNumber,
+        completePhoneNumber: completePhoneNumber,
         dateCreated: currentTime,
         dateUpdated: currentTime,
         resolution: null,

@@ -41,7 +41,7 @@ router.post("/", async (request, response) => {
         return;
     }
 
-    const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/`;
+    const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/`;
     const userProfileQueryResult = await admin
         .firestore()
         .collection(userProfilePath)
@@ -55,10 +55,13 @@ router.post("/", async (request, response) => {
         const userAccountId = uuidv4();
         const activityId = uuidv4();
 
-        const newUserProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+        const newUserProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
         const userProfileRef = admin.firestore().doc(newUserProfilePath);
 
         const userProfileData = {
+            username: null,
+            profileImage: null,
+            coverImage: null,
             firstName: "New User",
             lastName: null,
             emailAddress: null,
@@ -72,7 +75,6 @@ router.post("/", async (request, response) => {
             universityName: null,
             createdOn: admin.firestore.FieldValue.serverTimestamp(),
             lastUpdatedOn: null,
-            fcmToken: null,
             activityId: `AID${activityId}`,
             emailVerifiedOn: null
         };
@@ -90,7 +92,7 @@ router.post("/", async (request, response) => {
                     createdOn: admin.firestore.FieldValue.serverTimestamp(),
                 };
 
-                const singleDeviceLoginPath = `/USER/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
+                const singleDeviceLoginPath = `/USERS/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
                 const singleDeviceLoginRef = admin
                     .firestore()
                     .doc(singleDeviceLoginPath);
@@ -163,7 +165,7 @@ router.post("/", async (request, response) => {
             createdOn: admin.firestore.FieldValue.serverTimestamp(),
         };
 
-        const singleDeviceLoginPath = `/USER/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
+        const singleDeviceLoginPath = `/USERS/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
         const singleDeviceLoginRef = admin.firestore().doc(singleDeviceLoginPath);
 
         //upload the document
@@ -192,7 +194,7 @@ router.post("/", async (request, response) => {
         }
         const singleDeviceLoginData = singleDeviceLoginSnapshot.data();
 
-        const passwordPath = `/USER/PASSWORDS/FILES/${userAccountId}`;
+        const passwordPath = `/USERS/PASSWORDS/FILES/${userAccountId}`;
         const passwordRef = admin.firestore().doc(passwordPath);
         const passwordQueryResult = await passwordRef.get();
         const passwordCreated = passwordQueryResult.exists;

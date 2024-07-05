@@ -35,7 +35,7 @@ router.post("/", async (request, response) => {
         message: null,
     };
 
-    const feedbackPath = `/USER/FEEDBACKS/APP/`;
+    const feedbackPath = `/USERS/FEEDBACKS/APP/`;
     const feedbackRef = admin.firestore().collection(feedbackPath);
 
     const feedbackQuery = feedbackRef.where("userAccountId", "==", userAccountId);

@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/", async (request, response) => {
-    const professionsAdapterListPath = `/UTILITY/APP/PROFESSIONS/`;
+    const professionsAdapterListPath = `/UTILITIES/APP/PROFESSIONS/`;
     const professionAdapterListPathRef = admin
         .firestore()
         .collection(professionsAdapterListPath);

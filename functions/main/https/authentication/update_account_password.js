@@ -77,7 +77,7 @@ router.post("/", async (request, response) => {
     }
 
     //hash the password
-    const passwordPath = `/USER/PASSWORDS/FILES/${userAccountId}`;
+    const passwordPath = `/USERS/PASSWORDS/FILES/${userAccountId}`;
     const passwordRef = admin.firestore().doc(passwordPath);
     const passwordQueryResult = await passwordRef.get();
 
@@ -99,7 +99,7 @@ router.post("/", async (request, response) => {
         } else {
             // Proceed with hashing and save it in database
             try {
-                const saltRounds = getRandomNumber(10, 18);
+                const saltRounds = 12
                 const salt = await bcrypt.genSalt(saltRounds);
                 const hashedPassword = await bcrypt.hash(password, salt);
 

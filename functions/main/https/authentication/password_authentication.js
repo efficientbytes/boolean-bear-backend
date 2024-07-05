@@ -62,7 +62,7 @@ router.post("/", async (request, response) => {
     }
 
     //hash the password
-    const passwordPath = `/USER/PASSWORDS/FILES/${userAccountId}`;
+    const passwordPath = `/USERS/PASSWORDS/FILES/${userAccountId}`;
     const passwordRef = admin.firestore().doc(passwordPath);
     const passwordQueryResult = await passwordRef.get();
 
@@ -80,7 +80,7 @@ router.post("/", async (request, response) => {
         if (match) {
             // Password matches
 
-            const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+            const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
             const userProfileQueryRef = admin.firestore().doc(userProfilePath);
             const userProfileQueryResult = await userProfileQueryRef.get();
 

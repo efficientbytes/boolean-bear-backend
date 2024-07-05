@@ -41,7 +41,7 @@ router.get("/:instructorId", async (request, response) => {
         return;
     }
 
-    const instructorProfilePath = `/INSTRUCTOR/PROFILE/FILES/${instructorId}`;
+    const instructorProfilePath = `/INSTRUCTORS/PRIVATE-PROFILES/FILES/${instructorId}`;
     const instructorProfileRef = admin.firestore().doc(instructorProfilePath);
     const instructorProfileSnapshot = await instructorProfileRef.get();
 

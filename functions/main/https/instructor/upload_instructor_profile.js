@@ -46,7 +46,7 @@ router.post("/", async (request, response) => {
     const joinedOn = time;
     const updatedOn = time;
 
-    const instructorCollectionPath = `/INSTRUCTOR/PROFILE/FILES/`;
+    const instructorCollectionPath = `/INSTRUCTORS/PRIVATE-PROFILES/FILES/`;
     const instructorCollectionRef = admin.firestore().collection(instructorCollectionPath);
 
     await instructorCollectionRef.doc(instructorId).set({

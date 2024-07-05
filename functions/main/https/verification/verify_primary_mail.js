@@ -107,7 +107,7 @@ router.get("/", async (request, response) => {
         return;
     }
 
-    const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+    const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
     const userProfilePathRef = admin.firestore().doc(userProfilePath);
     const userProfilePathSnapshot = await userProfilePathRef.get();
 
@@ -122,7 +122,7 @@ router.get("/", async (request, response) => {
     //check if the emailId in the mail is same as the email id in the verification document
 
     const verificationId = verificationKey.substring(3);
-    const primaryMailVerificationKeyPath = `/USER/VERIFICATIONS/PRIMARY-MAILS/${verificationId}`;
+    const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/${verificationId}`;
     const primaryMailVerificationRef = admin
         .firestore()
         .doc(primaryMailVerificationKeyPath);

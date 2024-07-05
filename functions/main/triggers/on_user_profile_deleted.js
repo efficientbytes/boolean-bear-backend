@@ -3,7 +3,7 @@ const logger = require("firebase-functions/logger");
 const {onDocumentDeleted} = require("firebase-functions/v2/firestore");
 // @ts-ignore
 exports.onUserProfileDeleted = onDocumentDeleted(
-    "/USER/PRIVATE-PROFILE/FILES/{userAccountId}",
+    "/USERS/PRIVATE-PROFILES/FILES/{userAccountId}",
     async (event) => {
         logger.log(`trigger onUpdate||on-user-profile-deleted.`);
         const userProfileSnapshot = event.data;
@@ -12,12 +12,12 @@ exports.onUserProfileDeleted = onDocumentDeleted(
         }
 
         const userAccountId = userProfileSnapshot.id;
-        const singleDeviceLoginPath = `/USER/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
+        const singleDeviceLoginPath = `/USERS/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
         await admin.firestore().doc(singleDeviceLoginPath).delete();
         await admin.auth().deleteUser(userAccountId);
-        const passwordPath = `/USER/PASSWORDS/FILES/${userAccountId}`;
+        const passwordPath = `/USERS/PASSWORDS/FILES/${userAccountId}`;
         await admin.firestore().doc(passwordPath).delete();
-        const fcmTokenPath = `/USER/FCM-TOKENS/FILES/${userAccountId}`;
+        const fcmTokenPath = `/USERS/FCM-TOKENS/FILES/${userAccountId}`;
         await admin.firestore().doc(fcmTokenPath).delete();
     },
 );

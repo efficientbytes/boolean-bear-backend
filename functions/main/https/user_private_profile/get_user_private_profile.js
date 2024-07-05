@@ -33,7 +33,7 @@ router.get("/", async (request, response) => {
         message: null,
     };
 
-    const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+    const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
     const userProfileRef = admin.firestore().doc(userProfilePath);
     const userProfileSnapshot = await userProfileRef.get();
 
@@ -45,6 +45,9 @@ router.get("/", async (request, response) => {
 
     const userProfile = userProfileSnapshot.data();
     responseBody.data = {
+        username: userProfile.username,
+        profileImage: userProfile.profileImage,
+        coverImage: userProfile.coverImage,
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
         emailAddress: userProfile.emailAddress,
