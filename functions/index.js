@@ -127,6 +127,9 @@ const createCourses = require("./main/https/courses/create_courses");
 app.use("/admin/contents/topics/courses/upload", createCourses);
 const createReelTemplates = require("./main/https/reels/create_reel_templates");
 app.use("/admin/reels/templates/create", createReelTemplates);
+const createMentionedLinkTemplates = require("./main/https/links/create_mentioned_link_templates");
+app.use("/admin/mentioned-links/templates/create", createMentionedLinkTemplates);
+
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
