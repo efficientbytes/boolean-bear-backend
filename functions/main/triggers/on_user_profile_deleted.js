@@ -3,7 +3,7 @@ const logger = require("firebase-functions/logger");
 const {onDocumentDeleted} = require("firebase-functions/v2/firestore");
 // @ts-ignore
 exports.onUserProfileDeleted = onDocumentDeleted(
-    "/USER/PRIVATE-PROFILE/FILES/{userAccountId}",
+    "/USERS/PRIVATE-PROFILES/FILES/{userAccountId}",
     async (event) => {
         logger.log(`trigger onUpdate||on-user-profile-deleted.`);
         const userProfileSnapshot = event.data;

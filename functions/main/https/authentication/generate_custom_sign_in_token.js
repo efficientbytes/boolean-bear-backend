@@ -75,7 +75,6 @@ router.post("/", async (request, response) => {
             universityName: null,
             createdOn: admin.firestore.FieldValue.serverTimestamp(),
             lastUpdatedOn: null,
-            fcmToken: null,
             activityId: `AID${activityId}`,
             emailVerifiedOn: null
         };

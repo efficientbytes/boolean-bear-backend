@@ -93,7 +93,7 @@ router.post("/", async (request, response) => {
         return;
     }
 
-    const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/`;
+    const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/`;
     const userProfileQueryResult = await admin
         .firestore()
         .collection(userProfilePath)

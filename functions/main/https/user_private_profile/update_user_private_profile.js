@@ -43,7 +43,7 @@ router.post("/", async (request, response) => {
         message: null,
     };
 
-    const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+    const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
     const userProfileRef = admin.firestore().doc(userProfilePath);
 
     await userProfileRef

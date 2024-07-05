@@ -45,15 +45,24 @@ router.post("/", async (request, response) => {
         return;
     }
 
-    const userProfilePath = `/USER/PRIVATE-PROFILE/FILES/${userAccountId}`;
+    const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
     const userProfileRef = admin.firestore().doc(userProfilePath);
+
+    let parsedProfession = 0
+
+    if (typeof profession === 'string') {
+        const num = parseInt(profession, 10);
+        if (!isNaN(num)) {
+            parsedProfession = num
+        }
+    }
 
     await userProfileRef
         .update({
             firstName: firstName,
             lastName: lastName,
             emailAddress: emailAddress,
-            profession: profession,
+            profession: parsedProfession,
         })
         .then((result) => {
             responseBody.message = "User profile has been updated.";
