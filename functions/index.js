@@ -125,6 +125,8 @@ const createTopics = require("./main/https/courses/create_topics");
 app.use("/admin/contents/topics/upload", createTopics);
 const createCourses = require("./main/https/courses/create_courses");
 app.use("/admin/contents/topics/courses/upload", createCourses);
+const createReelTemplates = require("./main/https/reels/create_reel_templates");
+app.use("/admin/reels/templates/create", createReelTemplates);
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);

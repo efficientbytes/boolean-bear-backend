@@ -49,7 +49,7 @@ router.get("/:reelId/reel-details", async (request, response) => {
         return;
     }
 
-    const reelPath = `/ASSETS/REELS/CONTENTS/${reelId}`;
+    const reelPath = `/ASSETS/REELS/FILES/${reelId}`;
     const reelRef = admin.firestore().doc(reelPath);
     const reelQueryResult = await reelRef.get();
 

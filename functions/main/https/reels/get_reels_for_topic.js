@@ -4,7 +4,7 @@ const router = express.Router();
 
 const asyncFunction = async (reelId, topicId) => {
 
-    const reelPath = `/ASSETS/REELS/CONTENTS/${reelId}`;
+    const reelPath = `/ASSETS/REELS/FILES/${reelId}`;
     const reelRef = admin.firestore().doc(reelPath);
     const reelQueryResult = await reelRef.get();
 
