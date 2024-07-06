@@ -44,7 +44,7 @@ router.post("/:contentId", async (request, response) => {
 
 
     //check if content id exists
-    const contentPath = `/ASSETS/REELS/CONTENTS/${contentId}`;
+    const contentPath = `/ASSETS/REELS/FILES/${contentId}`;
     const contentRef = admin.firestore().doc(contentPath);
 
     const contentQueryResult = await contentRef.get();
