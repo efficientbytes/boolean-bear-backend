@@ -12,6 +12,18 @@ exports.onUserProfileDeleted = onDocumentDeleted(
         }
 
         const userAccountId = userProfileSnapshot.id;
+
+        //store user data
+        const deletedUsersPath = `USERS/DELETED/FILES/${userAccountId}`;
+        await admin.firestore().doc(deletedUsersPath).set(event.data.data()).then(async () => {
+
+            return await admin.firestore().doc(deletedUsersPath).update({
+                deletedOn: admin.firestore.FieldValue.serverTimestamp()
+            })
+
+        });
+
+        //delete other user related data
         const singleDeviceLoginPath = `/USERS/SINGLE-DEVICE-TOKENS/FILES/${userAccountId}`;
         await admin.firestore().doc(singleDeviceLoginPath).delete();
         await admin.auth().deleteUser(userAccountId);
@@ -19,5 +31,27 @@ exports.onUserProfileDeleted = onDocumentDeleted(
         await admin.firestore().doc(passwordPath).delete();
         const fcmTokenPath = `/USERS/FCM-TOKENS/FILES/${userAccountId}`;
         await admin.firestore().doc(fcmTokenPath).delete();
+
+        const primaryEmailVerificationPath = `USERS/VERIFICATIONS/PRIMARY-MAILS/`;
+        const primaryEmailVerificationCollectionRef = admin.firestore().collection(primaryEmailVerificationPath)
+            .where("userAccountId", "==", userAccountId);
+
+        const primaryVerificationQueryResult =
+            await primaryEmailVerificationCollectionRef.get();
+
+        if (!primaryVerificationQueryResult.empty) {
+            for (const snapshot of primaryVerificationQueryResult.docs) {
+                const snapshotId = snapshot.id;
+                try {
+                    const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/${snapshotId}`;
+                    const primaryMailVerificationRef = admin
+                        .firestore()
+                        .doc(primaryMailVerificationKeyPath);
+                    await primaryMailVerificationRef.delete();
+                } catch (error) {
+
+                }
+            }
+        }
     },
 );

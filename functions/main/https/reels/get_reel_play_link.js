@@ -23,7 +23,7 @@ function generateSignedUrl(
     */
 
     //concatenate videoID with the base url
-    const baseUrl = "https://vz-5f0cfb49-882.b-cdn.net/";
+    const baseUrl = "https://vz-1dcf0c6d-a1b.b-cdn.net/";
     const unsignedUrl = baseUrl + videoId + `/playlist.m3u8`;
 
     let parameterData = '', parameterDataUrl = '', signaturePath = '', hashAbleBase = '', token = '';

@@ -8,7 +8,7 @@ router.get("/", async (request, response) => {
             "namespace": "android_app",
             "package_name": "app.efficientbytes.booleanbear",
             "sha256_cert_fingerprints":
-                ["98:37:B8:3E:49:FA:1E:5B:F9:D8:50:A7:61:DD:49:49:AD:6E:E0:4B:3B:88:AD:A8:32:A7:E1:D8:A0:26:E2:69"]
+                ["88:7E:41:65:98:8E:A8:18:A9:31:1F:82:11:15:4E:E2:06:EC:75:18:65:9F:1B:E6:C2:74:54:2F:EB:13:D9:85"]
         }
     }
     const list = [];
