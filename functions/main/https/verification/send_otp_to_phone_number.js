@@ -20,6 +20,8 @@ router.post("/", async (request, response) => {
     const phoneNumber = request.body.phoneNumber || null;
     const prefix = request.body.prefix || null;
 
+    logger.info(`OTP requested. Prefix is ${prefix}, Phone number is ${phoneNumber}`);
+
     const responseBody = {
         data: null,
         message: null,
@@ -63,15 +65,16 @@ router.post("/", async (request, response) => {
         .verifications.create({to: `${prefix}${phoneNumber}`, channel: "sms"})
         .then((verification) => {
             if (verification.status === "pending") {
-                responseBody.message = `OTP has been sent ${prefix}${phoneNumber}`;
+                responseBody.message = `OTP has been sent to ${prefix}${phoneNumber}`;
                 responseBody.data.prefix = prefix;
                 responseBody.data.phoneNumber = phoneNumber;
+                logger.info(`OTP Sent to phone number ${prefix}${phoneNumber}.`);
                 response.status(200).send(responseBody);
             }
         })
         .catch((error) => {
-            logger.error(`send-otp-to-phone-number||failed||http||error is ${error.message}`);
-            responseBody.message = `Verification error identifier ${error.code}`;
+            logger.error(`OTP generation failed. Message ${error.message}, Error is ${error.code}}`);
+            responseBody.message = `OTP request failed. Error code ${error.code}`;
             response.status(503).send(responseBody);
         });
 });

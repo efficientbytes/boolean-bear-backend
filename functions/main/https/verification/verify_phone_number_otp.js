@@ -21,6 +21,8 @@ router.post("/", async (request, response) => {
     const prefix = request.body.prefix || null;
     const otp = request.body.otp || null;
 
+    logger.info(`OTP verification requested. Prefix is ${prefix}, Phone number is ${phoneNumber}, OTP is ${otp}`);
+
     const responseBody = {
         data: null,
         message: null,
@@ -70,17 +72,18 @@ router.post("/", async (request, response) => {
             return;
         }
     }
-
     twilio.verify.v2
         .services(twilioServiceSid)
         .verificationChecks.create({to: `${prefix}${phoneNumber}`, code: otp})
         .then((verification_check) => {
             if (verification_check.status === "approved") {
+                logger.info(`OTP has been verified for phone number ${prefix}${phoneNumber}.`);
                 responseBody.message = `Verification successful`;
                 responseBody.data.phoneNumber = phoneNumber;
                 responseBody.data.prefix = prefix;
                 response.status(200).send(responseBody);
             } else if (verification_check.status === "pending") {
+                logger.info(`OTP verification is pending for phone number ${prefix}${phoneNumber}.`);
                 responseBody.message = `Verification failed`;
                 responseBody.data.phoneNumber = phoneNumber;
                 responseBody.data.prefix = prefix;
@@ -88,8 +91,8 @@ router.post("/", async (request, response) => {
             }
         })
         .catch((error) => {
-            logger.error(`verify-phone-number-otp||failed||http||error is ${error.message}`);
-            responseBody.message = `Verification error identifier ${error.code}`;
+            logger.error(`OTP verification failed. Message ${error.message}, Error is ${error.code}}`);
+            responseBody.message = `OTP verification failed. Error code ${error.code}`;
             responseBody.data.phoneNumber = phoneNumber;
             responseBody.data.prefix = prefix;
             response.status(503).send(responseBody);
