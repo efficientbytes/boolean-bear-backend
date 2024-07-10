@@ -14,6 +14,7 @@
   },
   "main": "index.js",
   "dependencies": {
+    "own_modules": "file:./own_modules/",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "config": "^3.3.11",
