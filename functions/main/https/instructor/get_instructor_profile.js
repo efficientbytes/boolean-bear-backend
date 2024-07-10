@@ -1,8 +1,9 @@
 const admin = require("firebase-admin");
 const express = require("express");
 const router = express.Router();
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
-router.get("/:instructorId", async (request, response) => {
+router.get("/:instructorId", verifyAppCheckToken, async (request, response) => {
     if (
         !request.headers.authorization ||
         !request.headers.authorization.startsWith("Bearer ")

@@ -1,7 +1,9 @@
 const admin = require("firebase-admin");
 const express = require("express");
 const router = express.Router();
-router.get("/", async (request, response) => {
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
+
+router.get("/", verifyAppCheckToken, async (request, response) => {
 
     const responseBody = {
         message: null,

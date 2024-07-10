@@ -3,8 +3,9 @@ const express = require("express");
 const {user} = require("firebase-functions/v1/auth");
 const {logger} = require("firebase-functions");
 const router = express.Router();
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
-router.post("/:contentId", async (request, response) => {
+router.post("/:contentId", verifyAppCheckToken, async (request, response) => {
     if (
         !request.headers.authorization ||
         !request.headers.authorization.startsWith("Bearer ")

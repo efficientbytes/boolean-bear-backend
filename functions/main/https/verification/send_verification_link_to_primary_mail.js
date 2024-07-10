@@ -7,8 +7,9 @@ const mailjet = require("node-mailjet").apiConnect(
     process.env.MAIL_JET_API_KEY,
     process.env.MAIL_JET_SECRET_KEY,
 );
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
-router.post("/", async (request, response) => {
+router.post("/", verifyAppCheckToken, async (request, response) => {
     if (
         !request.headers.authorization ||
         !request.headers.authorization.startsWith("Bearer ")

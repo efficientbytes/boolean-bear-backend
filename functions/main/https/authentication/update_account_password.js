@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const admin = require("firebase-admin");
 const bcrypt = require("bcrypt");
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
 function validatePassword(password) {
     if (!password) {
@@ -29,7 +30,7 @@ function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-router.post("/", async (request, response) => {
+router.post("/", verifyAppCheckToken, async (request, response) => {
 
     if (
         !request.headers.authorization ||

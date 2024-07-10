@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const {logger} = require("firebase-functions");
 const router = express.Router();
 const securityKey = process.env.CONTENT_API_KEY;
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
 function generateSignedUrl(
     videoId,
@@ -96,7 +97,7 @@ function generateSignedUrl(
 }
 
 
-router.get("/:reelId/play-link", async (request, response) => {
+router.get("/:reelId/play-link", verifyAppCheckToken, async (request, response) => {
     if (
         !request.headers.authorization ||
         !request.headers.authorization.startsWith("Bearer ")
