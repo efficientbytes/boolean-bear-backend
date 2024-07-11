@@ -1,6 +1,7 @@
 const admin = require("firebase-admin");
 const express = require("express");
 const router = express.Router();
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
 const asyncFunction = async (reelId, topicId) => {
 
@@ -52,7 +53,7 @@ const asyncFunction = async (reelId, topicId) => {
     }
 };
 
-router.get("/:topicId", async (request, response) => {
+router.get("/:topicId", verifyAppCheckToken, async (request, response) => {
 
     const topicId = request.params.topicId || null;
 

@@ -2,33 +2,12 @@ const admin = require("firebase-admin");
 const express = require("express");
 const {logger} = require("firebase-functions");
 const router = express.Router();
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
+const {verifyIdToken} = require("own_modules/verify_id_token.js");
 
-router.post("/", async (request, response) => {
-    if (
-        !request.headers.authorization ||
-        !request.headers.authorization.startsWith("Bearer ")
-    ) {
-        response.status(401).send({message: `Authentication required.`});
-        return;
-    }
-    const idToken = request.headers.authorization.split(' ')[1];
-    let userAccountId;
-    try {
-        const tokenData = await admin.auth().verifyIdToken(idToken);
-        if (tokenData == null) {
-            response.status(401).send({message: `Invalid auth token`});
-            return;
-        }
-        userAccountId = tokenData.uid;
-        if (userAccountId == null) {
-            response.status(401).send({message: `Invalid auth token`});
-            return;
-        }
-    } catch (error) {
-        response.status(401).send({message: `Invalid auth token`});
-        return;
-    }
+router.post("/", verifyAppCheckToken, verifyIdToken, async (request, response) => {
 
+    const userAccountId = request.userAccountId;
     const firstName = request.body.firstName || null;
     const lastName = request.body.lastName || null;
     const emailAddress = request.body.emailAddress || null;

@@ -1,8 +1,9 @@
 const admin = require("firebase-admin");
 const express = require("express");
 const router = express.Router();
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
-router.get("/", async (request, response) => {
+router.get("/", verifyAppCheckToken, async (request, response) => {
     const professionsAdapterListPath = `/UTILITIES/APP/PROFESSIONS/`;
     const professionAdapterListPathRef = admin
         .firestore()

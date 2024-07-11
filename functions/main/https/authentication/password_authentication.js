@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const admin = require("firebase-admin");
 const bcrypt = require("bcrypt");
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
 function validatePassword(password) {
     if (!password) {
@@ -26,7 +27,7 @@ function validatePassword(password) {
 }
 
 
-router.post("/", async (request, response) => {
+router.post("/", verifyAppCheckToken, async (request, response) => {
 
     const password = request.body.password || null;
     const userAccountId = request.body.userAccountId || null;

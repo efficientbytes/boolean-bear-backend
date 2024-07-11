@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const {v4: uuidv4} = require("uuid");
 const admin = require("firebase-admin");
-router.post("/", async (request, response) => {
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
+
+router.post("/", verifyAppCheckToken, async (request, response) => {
     const phoneNumber = request.body.phoneNumber || null;
     const prefix = request.body.prefix || null;
     const responseBody = {

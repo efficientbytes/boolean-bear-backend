@@ -7,6 +7,7 @@ const twilioServiceSid = process.env.TWILIO_SERVICE_SID;
 const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
 const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
 const twilio = require("twilio")(twilioAccountSid, twilioAuthToken);
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
 class User {
     constructor(username, phoneNumber, otp) {
@@ -60,7 +61,7 @@ const sendOtp = async (prefix, phoneNumber, response, responseBody) => {
 
 }
 
-router.post("/", async (request, response) => {
+router.post("/", verifyAppCheckToken, async (request, response) => {
 
     const phoneNumber = request.body.phoneNumber || null;
     const prefix = request.body.prefix || null;

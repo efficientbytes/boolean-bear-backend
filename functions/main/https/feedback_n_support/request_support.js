@@ -2,10 +2,10 @@ const admin = require("firebase-admin");
 const express = require("express");
 const {customAlphabet} = require("nanoid");
 const {logger} = require("firebase-functions");
-
 const router = express.Router();
+const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
-router.post("/", async (request, response) => {
+router.post("/", verifyAppCheckToken, async (request, response) => {
     const userAccountId = request.body.userAccountId || null;
     const prefix = request.body.prefix || null;
     const phoneNumber = request.body.phoneNumber || null;
