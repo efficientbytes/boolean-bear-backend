@@ -20,20 +20,23 @@ const verifyIdToken = async (req, res, next) => {
         const tokenData = await admin.auth().verifyIdToken(idToken);
 
         if (tokenData == null) {
-            return res.status(401).send("Invalid Auth Token");
+            logger.info(`Id token unauthorized access. Authentication failed.`);
+            return res.status(401).send("Authentication Failed");
         }
 
         const userAccountId = tokenData.uid;
 
         if (userAccountId == null) {
-            return res.status(401).send("Invalid Auth Token");
+            logger.info(`Id token unauthorized access. User account could not be found.`);
+            return res.status(401).send("Authentication Failed");
         }
 
         //continue to next , pass the userAccountId
         req.userAccountId = userAccountId;
         next();
     } catch (error) {
-        return res.status(401).send("Invalid Auth Token");
+        logger.info(`Id token unauthorized access. Error is ${error.toString()}.`);
+        return res.status(401).send("Authentication Failed");
     }
 
 }
