@@ -3,32 +3,9 @@ const express = require("express");
 const {logger} = require("firebase-functions");
 const router = express.Router();
 const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
+const {verifyIdToken} = require("own_modules/verify_id_token.js");
 
-router.get("/:reelId/reel-details", verifyAppCheckToken, async (request, response) => {
-    if (
-        !request.headers.authorization ||
-        !request.headers.authorization.startsWith("Bearer ")
-    ) {
-        response.status(401).send({message: `Authentication required.`});
-        return;
-    }
-    const idToken = request.headers.authorization.split(' ')[1];
-    let userAccountId;
-    try {
-        const tokenData = await admin.auth().verifyIdToken(idToken);
-        if (tokenData == null) {
-            response.status(401).send({message: `Invalid auth token`});
-            return;
-        }
-        userAccountId = tokenData.uid;
-        if (userAccountId == null) {
-            response.status(401).send({message: `Invalid auth token`});
-            return;
-        }
-    } catch (error) {
-        response.status(401).send({message: `Invalid auth token`});
-        return;
-    }
+router.get("/:reelId/reel-details", verifyAppCheckToken, verifyIdToken, async (request, response) => {
 
     const reelId = request.params.reelId || null;
     const inDetailed = request.query.in_detailed || false;
