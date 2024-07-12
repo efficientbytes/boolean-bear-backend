@@ -16,7 +16,7 @@ const verifyAppCheckToken = async (req, res, next) => {
         const expirationTimeSeconds = appCheckClaims.token.exp;
         logger.info(`App check token expiration time in seconds is ${expirationTimeSeconds}`);
         if (expirationTimeSeconds * 1000 < Date.now()) {
-            logger.warn(`App check token expired`);
+            logger.warn(`App check token expired. Logged at is ${Date.now()} and token expiration time is ${expirationTimeSeconds}`);
             return res.status(415).send("Unauthorized Device");
         }
         logger.info(`App check token verified`);
