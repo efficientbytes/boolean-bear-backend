@@ -3,8 +3,10 @@ const router = express.Router();
 const admin = require("firebase-admin");
 const bcrypt = require("bcrypt");
 const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
+const {logger} = require("firebase-functions");
 
 function validatePassword(password) {
+    logger.info(`Function validatePassword started`);
     if (!password) {
         return "Password cannot be empty.";
     }
@@ -29,8 +31,11 @@ function validatePassword(password) {
 
 router.post("/", verifyAppCheckToken, async (request, response) => {
 
+    logger.info(`API password_authentication started`);
     const password = request.body.password || null;
     const userAccountId = request.body.userAccountId || null;
+    logger.info(`User account id is ${userAccountId}`);
+
 
     const responseBody = {
         data: null,
@@ -43,12 +48,14 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
     }
 
     if (password == null) {
+        logger.warn(`Password is not supplied`);
         responseBody.message = `Password is not provided`;
         response.status(400).send(responseBody);
         return;
     }
 
     if (userAccountId == null) {
+        logger.warn(`User account id is not supplied`);
         responseBody.message = `User account id is not provided`;
         response.status(400).send(responseBody);
         return;
@@ -57,6 +64,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
     const validationResponse = validatePassword(password);
 
     if (validationResponse != null) {
+        logger.warn(`Password did not pass the validation`);
         responseBody.message = validationResponse;
         response.status(400).send(responseBody);
         return
@@ -68,6 +76,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
     const passwordQueryResult = await passwordRef.get();
 
     if (!passwordQueryResult.exists) {
+        logger.warn(`Password document does not exists`);
         responseBody.message = `User does not exist in the server.`;
         response.status(400).send(responseBody);
         return
@@ -77,15 +86,17 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
     const serverHash = passwordData.hash;
 
     try {
+        logger.info(`Password about to be compared`);
         const match = await bcrypt.compare(password, serverHash);
         if (match) {
             // Password matches
-
+            logger.info(`Password matches`);
             const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
             const userProfileQueryRef = admin.firestore().doc(userProfilePath);
             const userProfileQueryResult = await userProfileQueryRef.get();
 
             if (!userProfileQueryResult.exists) {
+                logger.warn(`User profile document does not exists`);
                 responseBody.message = `Account does not exists.`;
                 response.status(400).send(responseBody);
                 return
@@ -102,11 +113,12 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
 
         } else {
             // Password does not match
-
+            logger.warn(`Password does not match`);
             responseBody.message = `Incorrect credential.`;
             response.status(400).send(responseBody);
         }
     } catch (err) {
+        logger.error(`Password could not be matched with the server hash. Error is ${err.message}`);
         responseBody.message = `Failed to process the request.`;
         response.status(500).send(responseBody);
     }

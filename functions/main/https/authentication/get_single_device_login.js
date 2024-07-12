@@ -3,10 +3,14 @@ const express = require("express");
 const router = express.Router();
 const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 const {verifyIdToken} = require("own_modules/verify_id_token.js");
+const {logger} = require("firebase-functions");
 
 router.get("/", verifyAppCheckToken, verifyIdToken, async (request, response) => {
 
+    logger.info(`API get_single_device_login started`);
     const userAccountId = request.userAccountId;
+    logger.info(`User account id is ${userAccountId}`);
+
     const responseBody = {
         data: null,
         message: null,
@@ -22,6 +26,7 @@ router.get("/", verifyAppCheckToken, verifyIdToken, async (request, response) =>
     const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
 
     if (!singleDeviceLoginSnapshot.exists) {
+        logger.warn(`Single device login document does not exists`);
         responseBody.message = `Could not find device login records`;
         response.status(404).send(responseBody);
         return;

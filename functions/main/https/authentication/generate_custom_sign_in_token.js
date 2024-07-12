@@ -3,10 +3,15 @@ const router = express.Router();
 const {v4: uuidv4} = require("uuid");
 const admin = require("firebase-admin");
 const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
+const {logger} = require("firebase-functions");
 
 router.post("/", verifyAppCheckToken, async (request, response) => {
+    logger.info(`API generate_custom_sign_in_token started`);
     const phoneNumber = request.body.phoneNumber || null;
+    logger.info(`Phone number is ${phoneNumber}`);
     const prefix = request.body.prefix || null;
+    logger.info(`Prefix is ${prefix}`);
+
     const responseBody = {
         data: null,
         message: null,
@@ -32,12 +37,14 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
     }
 
     if (phoneNumber == null) {
+        logger.warn(`Phone number is not supplied`);
         responseBody.message = `Phone number is not provided`;
         response.status(400).send(responseBody);
         return;
     }
 
     if (prefix == null) {
+        logger.warn(`Prefix is not supplied`);
         responseBody.message = `Prefix is not provided`;
         response.status(400).send(responseBody);
         return;
@@ -54,6 +61,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
 
     if (userProfileQueryResult.empty) {
         // it's a new user
+        logger.info(`User is new`);
         const userAccountId = uuidv4();
         const activityId = uuidv4();
 
@@ -81,12 +89,18 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
             emailVerifiedOn: null
         };
 
+        logger.info(`User profile document about to be created`);
         await userProfileRef
             .create(userProfileData)
-            .then(() => admin.auth().createCustomToken(userAccountId))
+            .then(() => {
+                logger.info(`User profile document created`);
+                logger.info(`Custom token about to be generated`);
+                admin.auth().createCustomToken(userAccountId)
+            })
             .then(async (customToken) => {
-
                 //create a single device login document
+                logger.info(`Custom token generated`);
+
                 const deviceId = `DID${uuidv4()}`;
 
                 const singleDeviceLogin = {
@@ -99,14 +113,18 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
                     .firestore()
                     .doc(singleDeviceLoginPath);
 
+                logger.info(`Single device login document about to be created`);
+
                 //upload the document
                 const result = await singleDeviceLoginRef
                     .set(singleDeviceLogin)
                     .then((result) => {
+                        logger.info(`Single device login document created`);
                         return true;
                     })
                     .catch((error) => {
                         //failed to upload the document
+                        logger.error(`Single device login document could not be created. Error is ${error.message}`);
                         responseBody.message = error.message;
                         return false;
                     });
@@ -119,6 +137,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
                 const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
 
                 if (!singleDeviceLoginSnapshot.exists) {
+                    logger.warn(`Single device login document not found`);
                     responseBody.message = `Could not find device login records`;
                     response.status(400).send(responseBody);
                     return;
@@ -137,9 +156,10 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
             });
     } else {
         // already existing user
-
+        logger.info(`User is already registered`);
         const snapshot = userProfileQueryResult.docs.pop();
         if (!snapshot.exists) {
+            logger.warn(`User profile document not found`);
             responseBody.message = "User record not found";
             response.status(400).send(responseBody);
             return;
@@ -174,10 +194,11 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
         const result = await singleDeviceLoginRef
             .set(singleDeviceLogin)
             .then((result) => {
+                logger.info(`Single device updated`);
                 return true;
             })
             .catch((error) => {
-                //failed to upload the document
+                logger.error(`Single device login document could not be updated. Error is ${error.message}`);
                 responseBody.message = error.message;
                 return false;
             });
@@ -190,6 +211,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
         const singleDeviceLoginSnapshot = await singleDeviceLoginRef.get();
 
         if (!singleDeviceLoginSnapshot.exists) {
+            logger.warn(`Single device login document not found`);
             responseBody.message = `Could not find device login records`;
             response.status(400).send(responseBody);
             return;
@@ -200,6 +222,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
         const passwordRef = admin.firestore().doc(passwordPath);
         const passwordQueryResult = await passwordRef.get();
         const passwordCreated = passwordQueryResult.exists;
+        logger.info(`Password created? ${passwordCreated}`);
 
         responseBody.data.token = await admin.auth().createCustomToken(userAccountId);
         responseBody.data.userAccountId = userAccountId;
