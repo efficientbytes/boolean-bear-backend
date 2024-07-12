@@ -117,8 +117,8 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
             responseBody.message = `Incorrect credential.`;
             response.status(400).send(responseBody);
         }
-    } catch (err) {
-        logger.error(`Password could not be matched with the server hash. Error is ${err.message}`);
+    } catch (error) {
+        logger.error(`Password could not be matched with the server hash. Error is ${error.message}`);
         responseBody.message = `Failed to process the request.`;
         response.status(500).send(responseBody);
     }

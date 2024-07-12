@@ -92,8 +92,8 @@ router.post("/", verifyAppCheckToken, verifyIdToken, async (request, response) =
             response.status(500).send(responseBody);
         });
 
-    } catch (err) {
-        logger.error(`Password could not be created. Error is ${err.message}`);
+    } catch (error) {
+        logger.error(`Password could not be created. Error is ${error.message}`);
         responseBody.message = `Failed to accept the password.`;
         response.status(500).send(responseBody);
     }
