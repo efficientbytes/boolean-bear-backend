@@ -17,8 +17,6 @@ if (!admin.apps.length) {
 }
 
 //http functions
-const welcome = require("./main/https/landing/welcome");
-app.use("/", welcome);
 
 //user profile
 const getUserPrivateProfile = require("./main/https/user_private_profile/get_user_private_profile");
@@ -130,6 +128,9 @@ app.use("/admin/reels/templates/create", createReelTemplates);
 const createMentionedLinkTemplates = require("./main/https/links/create_mentioned_link_templates");
 app.use("/admin/mentioned-links/templates/create", createMentionedLinkTemplates);
 
+app.use((req, res, next) => {
+    res.redirect('https://play.google.com/store/apps/details?id=app.efficientbytes.booleanbear');
+});
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);
