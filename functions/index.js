@@ -56,7 +56,7 @@ const getMentionedLink = require("./main/https/links/get_mentioned_link");
 app.use("/mentioned-links", getMentionedLink);
 
 //analytics
-const increaseContentViews = require("./main/https/statistics/increase-content-views");
+const increaseContentViews = require("./main/https/statistics/increase_content_views");
 app.use("/statistics/content-views/app", increaseContentViews);
 
 //reels related
@@ -111,11 +111,11 @@ const uploadFCMToken = require("./main/https/user_private_profile/upload_fcm_tok
 app.use("/user/notifications/token/upload", uploadFCMToken);
 const deleteFCMToken = require("./main/https/user_private_profile/delete_fcm_token");
 app.use("/user/notification/token/delete", deleteFCMToken);
-const deleteAccountAppLink = require("./main/https/app-link/delete-account-app-link");
+const deleteAccountAppLink = require("./main/https/app_link/delete_account_app_link");
 app.use("/account/delete/", deleteAccountAppLink);
 
 //app link for deep link
-const appLinks = require("./main/https/app-link/app-link-verifications");
+const appLinks = require("./main/https/app_link/app_link_verifications");
 app.use("/.well-known/assetlinks.json", appLinks);
 
 //admin
