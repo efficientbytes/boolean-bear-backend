@@ -1,12 +1,14 @@
 const admin = require("firebase-admin");
 const express = require("express");
 const router = express.Router();
+const {logger} = require("firebase-functions");
 const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 const {verifyIdToken} = require("own_modules/verify_id_token.js");
 
 router.get("/", verifyAppCheckToken, verifyIdToken, async (request, response) => {
-
+    logger.info(`API get_user_private_profile started`);
     const userAccountId = request.userAccountId;
+    logger.info(`User account id is ${userAccountId}`);
     const responseBody = {
         data: null,
         message: null,
@@ -17,6 +19,7 @@ router.get("/", verifyAppCheckToken, verifyIdToken, async (request, response) =>
     const userProfileSnapshot = await userProfileRef.get();
 
     if (!userProfileSnapshot.exists) {
+        logger.warn(`User profile document does not exists`);
         responseBody.message = "User profile does not exists.";
         response.status(404).send(responseBody);
         return;
@@ -42,7 +45,7 @@ router.get("/", verifyAppCheckToken, verifyIdToken, async (request, response) =>
         createdOn: userProfile.createdOn._seconds,
         lastUpdatedOn: userProfile.createdOn._seconds,
     };
-
+    logger.info(`User profile document read`);
     responseBody.message = "User profile fetched successfully";
     response.status(200).send(responseBody);
 });

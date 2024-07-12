@@ -6,16 +6,25 @@ const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 const {verifyIdToken} = require("own_modules/verify_id_token.js");
 
 router.post("/", verifyAppCheckToken, verifyIdToken, async (request, response) => {
-
+    logger.info(`API update_user_private_profile started`);
     const userAccountId = request.userAccountId;
+    logger.info(`User account id is ${userAccountId}`);
     const username = request.body.username || null;
+    logger.info(`Username is ${username}`);
     const firstName = request.body.firstName || null;
+    logger.info(`First name is ${firstName}`);
     const lastName = request.body.lastName || null;
+    logger.info(`Last name is ${lastName}`);
     const emailAddress = request.body.emailAddress || null;
+    logger.info(`Email address is ${emailAddress}`);
     const profession = request.body.profession || 0;
+    logger.info(`Profession is ${profession}`);
     const linkedInUsername = request.body.linkedInUsername || null;
+    logger.info(`LinkedIn username is ${linkedInUsername}`);
     const gitHubUsername = request.body.gitHubUsername || null;
+    logger.info(`Github username is ${gitHubUsername}`);
     const universityName = request.body.universityName || null;
+    logger.info(`University name is ${universityName}`);
 
     const responseBody = {
         data: null,
@@ -25,6 +34,7 @@ router.post("/", verifyAppCheckToken, verifyIdToken, async (request, response) =
     const userProfilePath = `/USERS/PRIVATE-PROFILES/FILES/${userAccountId}`;
     const userProfileRef = admin.firestore().doc(userProfilePath);
 
+    logger.info(`User profile document about to be updated`);
     await userProfileRef
         .update({
             username: username,
@@ -37,10 +47,11 @@ router.post("/", verifyAppCheckToken, verifyIdToken, async (request, response) =
             gitHubUsername: gitHubUsername,
         })
         .then((result) => {
+            logger.info(`User profile document updated`);
             responseBody.message = "User profile has been updated.";
         })
         .catch((error) => {
-            logger.error(`update-user-private-profile||failed||http||error is ${error.message}`);
+            logger.error(`User profile document could not be updated. Error is ${error.message}`);
             responseBody.message = `User profile could not be updated. Error is ${error.message}`;
             response.status(500).send(responseBody);
         });
@@ -68,6 +79,7 @@ router.post("/", verifyAppCheckToken, verifyIdToken, async (request, response) =
         lastUpdatedOn: userProfile.createdOn._seconds,
     };
 
+    logger.info(`User profile document read`);
     response.status(200).send(responseBody);
 });
 
