@@ -17,11 +17,11 @@ class User {
 }
 
 router.post("/", verifyAppCheckToken, async (request, response) => {
-
+    logger.info(`API send_otp_to_phone_number started`);
     const phoneNumber = request.body.phoneNumber || null;
+    logger.info(`Phone number is ${phoneNumber}`);
     const prefix = request.body.prefix || null;
-
-    logger.info(`OTP requested. Prefix is ${prefix}, Phone number is ${phoneNumber}`);
+    logger.info(`Prefix is ${prefix}`);
 
     const responseBody = {
         data: null,
@@ -34,12 +34,14 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
     }
 
     if (phoneNumber == null) {
+        logger.warn(`Phone number is not supplied`);
         responseBody.message = `Phone number is not provided.`;
         response.status(400).send(responseBody);
         return;
     }
 
     if (prefix == null) {
+        logger.warn(`Prefix is not supplied`);
         responseBody.message = `Prefix is not provided.`;
         response.status(400).send(responseBody);
         return;
@@ -53,7 +55,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
 
     for (let user of testUserList) {
         if (user.phoneNumber === phoneNumber) {
-            responseBody.message = `OTP has been sent ${prefix}${phoneNumber}`;
+            responseBody.message = `OTP has been sent to ${prefix}${phoneNumber}`;
             responseBody.data.prefix = prefix;
             responseBody.data.phoneNumber = phoneNumber;
             response.status(200).send(responseBody);
@@ -61,20 +63,23 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
         }
     }
 
+    logger.info(`OTP about to be sent to ${prefix}${phoneNumber}`);
     twilio.verify.v2
         .services(twilioServiceSid)
         .verifications.create({to: `${prefix}${phoneNumber}`, channel: "sms"})
         .then((verification) => {
             if (verification.status === "pending") {
+                logger.info(`OTP sent to ${prefix}${phoneNumber}`);
                 responseBody.message = `OTP has been sent to ${prefix}${phoneNumber}`;
                 responseBody.data.prefix = prefix;
                 responseBody.data.phoneNumber = phoneNumber;
-                logger.info(`OTP Sent to phone number ${prefix}${phoneNumber}.`);
                 response.status(200).send(responseBody);
+            } else {
+                logger.warn(`OTP status for ${prefix}${phoneNumber} is ${verification.status}`);
             }
         })
         .catch((error) => {
-            logger.error(`OTP generation failed. Message ${error.message}, Error is ${error.code}}`);
+            logger.error(`OTP could not be sent to ${prefix}${phoneNumber}. Error is ${error.message}. Error code is ${error.code}`);
             responseBody.message = `OTP request failed. Error code ${error.code}`;
             response.status(503).send(responseBody);
         });

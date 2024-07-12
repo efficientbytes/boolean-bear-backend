@@ -17,12 +17,13 @@ class User {
 }
 
 router.post("/", verifyAppCheckToken, async (request, response) => {
-
+    logger.info(`API verify_phone_number_otp started`);
     const phoneNumber = request.body.phoneNumber || null;
+    logger.info(`Phone number is ${phoneNumber}`);
     const prefix = request.body.prefix || null;
+    logger.info(`Prefix is ${prefix}`);
     const otp = request.body.otp || null;
-
-    logger.info(`OTP verification requested. Prefix is ${prefix}, Phone number is ${phoneNumber}, OTP is ${otp}`);
+    logger.info(`OTP is ${otp}`);
 
     const responseBody = {
         data: null,
@@ -35,19 +36,20 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
     }
 
     if (phoneNumber == null) {
+        logger.warn(`Phone number not provided`);
         responseBody.message = `Phone number is not provided`;
         response.status(400).send(responseBody);
         return;
     }
 
     if (prefix == null) {
-        responseBody.message = `Prefix is not provided`;
+        logger.warn(`Prefix not provided`);
         response.status(400).send(responseBody);
         return;
     }
 
     if (otp == null) {
-        responseBody.message = `OTP is not provided`;
+        logger.warn(`OTP not provided`);
         response.status(400).send(responseBody);
         return;
     }
@@ -73,26 +75,29 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
             return;
         }
     }
-    twilio.verify.v2
+
+    logger.info(`Verifying otp ${otp} requested by ${prefix}${phoneNumber}`);
+    await twilio.verify.v2
         .services(twilioServiceSid)
         .verificationChecks.create({to: `${prefix}${phoneNumber}`, code: otp})
         .then((verification_check) => {
             if (verification_check.status === "approved") {
-                logger.info(`OTP has been verified for phone number ${prefix}${phoneNumber}.`);
+                logger.info(`OTP verified for ${prefix}${phoneNumber}`);
                 responseBody.message = `Verification successful`;
                 responseBody.data.phoneNumber = phoneNumber;
                 responseBody.data.prefix = prefix;
                 response.status(200).send(responseBody);
             } else if (verification_check.status === "pending") {
-                logger.info(`OTP verification is pending for phone number ${prefix}${phoneNumber}.`);
+                logger.warn(`Verifying otp ${otp} failed. Requested by ${prefix}${phoneNumber}`);
                 responseBody.message = `Verification failed`;
                 responseBody.data.phoneNumber = phoneNumber;
                 responseBody.data.prefix = prefix;
                 response.status(400).send(responseBody);
             }
+            logger.warn(`Verifying otp ${otp} failed. Requested by ${prefix}${phoneNumber}. Status is ${verification_check.status}`);
         })
         .catch((error) => {
-            logger.error(`OTP verification failed. Message ${error.message}, Error is ${error.code}}`);
+            logger.error(`Verifying otp ${otp} failed. Requested by ${prefix}${phoneNumber}. Error is ${error.message}. Error code is ${error.code}`);
             responseBody.message = `OTP verification failed. Error code ${error.code}`;
             responseBody.data.phoneNumber = phoneNumber;
             responseBody.data.prefix = prefix;
