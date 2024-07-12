@@ -12,7 +12,8 @@ function generateSignedUrl(
     videoId,
     minutes = 45,
 ) {
-
+    logger.info(`Function generateSignedUrl started`);
+    logger.info(`Video id is ${videoId}`);
     /*
       url: CDN URL w/o the trailing '/' - exp. http://test.b-cdn.net/file.png
       securityKey: Security token found in your pull zone
@@ -34,7 +35,7 @@ function generateSignedUrl(
     const expirationTime = Math.round(Date.now() / 1000) + (60 * minutes);
 
     //add countries to the block and allow list to generate new link
-    const allowedCountriesList = ["IN"];
+    const allowedCountriesList = null;
     const blockedCountriesList = null;
 
     let temporaryUrl = unsignedUrl;
@@ -74,6 +75,7 @@ function generateSignedUrl(
         });
     }
 
+    logger.info(`Token about to be hashed`);
     //generate the token after encryption
     hashAbleBase = securityKey + signaturePath + expirationTime + '' + parameterData;
     token = Buffer.from(crypto.createHash('sha256').update(hashAbleBase).digest(),).toString('base64');
@@ -82,6 +84,8 @@ function generateSignedUrl(
         .replace(/\+/g, '-')
         .replace(/\//g, '_')
         .replace(/=/g, '');
+
+    logger.info(`Token generated`);
 
     //generate the complete url
     return (
@@ -99,15 +103,16 @@ function generateSignedUrl(
 
 
 router.get("/:reelId/play-link", verifyAppCheckToken, verifyIdToken, async (request, response) => {
-
+    logger.info(`API get_reel_play_link started`);
     const reelId = request.params.reelId || null;
-
+    logger.info(`Reel id is ${reelId}`);
     const responseBody = {
         data: null,
         message: null
     }
 
     if (reelId == null) {
+        logger.warn(`Reel id is not supplied`);
         responseBody.message = `Reel id is not provided.`;
         response.status(400).send(responseBody);
         return;
@@ -118,6 +123,7 @@ router.get("/:reelId/play-link", verifyAppCheckToken, verifyIdToken, async (requ
     const reelQueryResult = await reelRef.get();
 
     if (!reelQueryResult.exists) {
+        logger.warn(`Reel document does not exists`);
         responseBody.message = `Reel does not exists.`;
         response.status(404).send(responseBody);
         return;
@@ -125,13 +131,15 @@ router.get("/:reelId/play-link", verifyAppCheckToken, verifyIdToken, async (requ
 
     const reelData = reelQueryResult.data();
     const videoId = reelData.videoId;
+    logger.info(`Video id is ${videoId}`);
 
     try {
+        logger.info(`Signed play link about to be generated`);
         responseBody.data = generateSignedUrl(videoId, 10);
         responseBody.message = `Successfully fetched play link`;
         response.status(200).send(responseBody);
     } catch (error) {
-        logger.error(`get-reel-play-link||failed||http||error is ${error.message}`);
+        logger.error(`Signed play link could not be generated. Error is ${error.message}`);
         responseBody.message = error.message;
         response.status(500).send(responseBody);
     }
