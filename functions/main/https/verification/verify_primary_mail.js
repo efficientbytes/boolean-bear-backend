@@ -4,6 +4,7 @@ const admin = require("firebase-admin");
 const {logger} = require("firebase-functions");
 
 function generateHtml(title, caption) {
+    logger.info(`Function generateHtml started`);
     const htmlContent = `
         <!DOCTYPE html>
         <html lang="en">
@@ -55,9 +56,13 @@ function generateHtml(title, caption) {
 }
 
 router.get("/", async (request, response) => {
+    logger.info(`API verify_primary_mail started`);
     const emailAddress = request.query.emailAddress || null;
+    logger.info(`Email address is ${emailAddress}`);
     const userAccountId = request.query.id || null;
+    logger.info(`User account id is ${userAccountId}`);
     const verificationKey = request.query.publicKey || null;
+    logger.info(`Verification key is ${verificationKey}`);
 
     const responseBody = {
         title: null,
@@ -65,6 +70,7 @@ router.get("/", async (request, response) => {
     };
 
     if (verificationKey == null) {
+        logger.warn(`Verification key is not supplied`);
         responseBody.title = `Verification Failed`;
         responseBody.caption = `Verification key is not provided.`;
         const htmlContent = generateHtml(responseBody.title, responseBody.caption);
@@ -73,6 +79,7 @@ router.get("/", async (request, response) => {
     }
 
     if (userAccountId == null) {
+        logger.warn(`User account is not supplied`);
         responseBody.title = `Verification Failed`;
         responseBody.caption = `User account id is not provided.`;
         const htmlContent = generateHtml(responseBody.title, responseBody.caption);
@@ -81,6 +88,7 @@ router.get("/", async (request, response) => {
     }
 
     if (emailAddress == null) {
+        logger.warn(`Email address is not supplied`);
         responseBody.title = `Verification Failed`;
         responseBody.caption = `Email address is not provided.`;
         const htmlContent = generateHtml(responseBody.title, responseBody.caption);
@@ -88,14 +96,17 @@ router.get("/", async (request, response) => {
         return;
     }
 
+    logger.info(`User is about to be authenticated`);
     //check if the user id is authenticated
     const userIdCheck = await admin
         .auth()
         .getUser(userAccountId)
         .then((result) => {
+            logger.info(`User is authenticated`);
             return true;
         })
         .catch((error) => {
+            logger.error(`User authentication could not be checked. Error is ${error.message}`);
             responseBody.title = `Verification Failed`;
             responseBody.caption = `User id is not authenticated.`;
             return false;
@@ -112,6 +123,7 @@ router.get("/", async (request, response) => {
     const userProfilePathSnapshot = await userProfilePathRef.get();
 
     if (!userProfilePathSnapshot.exists) {
+        logger.warn(`User profile document does not exists`);
         responseBody.title = `Verification Failed`;
         responseBody.caption = `User record doest not exists.`;
         const htmlContent = generateHtml(responseBody.title, responseBody.caption);
@@ -130,6 +142,7 @@ router.get("/", async (request, response) => {
         await primaryMailVerificationRef.get();
 
     if (!primaryMailVerificationSnapshot.exists) {
+        logger.warn(`Primary email verification document does not exists`);
         responseBody.title = `Verification Failed`;
         responseBody.caption = `Verification credentials has either been used,expired or not valid.`;
         const htmlContent = generateHtml(responseBody.title, responseBody.caption);
@@ -150,6 +163,7 @@ router.get("/", async (request, response) => {
         emailAddress !== primaryMailVerificationEmailAddress &&
         userAccountId !== primaryMailVerificationUserAccountId
     ) {
+        logger.warn(`Verification failed. Incorrect credentials`);
         responseBody.title = `Verification Failed`;
         responseBody.caption = `Incorrect verification credentials.`;
         const htmlContent = generateHtml(responseBody.title, responseBody.caption);
@@ -164,10 +178,11 @@ router.get("/", async (request, response) => {
             lastUpdatedOn: time,
         })
         .then(() => {
+            logger.info(`User profile document updated`);
             return true;
         })
         .catch((error) => {
-            logger.error(`verify-primary-mail||failed||http||error is ${error.message}`);
+            logger.error(`User profile document could not be updated. Error is ${error.message}`);
             responseBody.title = `Verification Failed`;
             responseBody.caption = `${error.message}`;
             return false;
@@ -179,6 +194,7 @@ router.get("/", async (request, response) => {
         return;
     }
 
+    logger.info(`User custom claims about to be modified`);
     const customClaim = {
         emailVerified: true,
     };
@@ -187,11 +203,12 @@ router.get("/", async (request, response) => {
         .auth()
         .setCustomUserClaims(userAccountId, customClaim)
         .then(async () => {
+            logger.info(`User custom claims modified`);
             responseBody.title = `Your email address has been verified &#127881;`;
             responseBody.caption = `You can now go back to the app and continue using it.`;
         })
         .catch((error) => {
-            logger.error(`verify-primary-mail||failed||http||error is ${error.message}`);
+            logger.error(`Email could not be verified for ${emailAddress}. Error is ${error.message}`);
             responseBody.title = `Verification Failed`;
             responseBody.caption = `Error ${error.message}`;
             const htmlContent = generateHtml(
