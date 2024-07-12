@@ -64,7 +64,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
     }
 
     logger.info(`OTP about to be sent to ${prefix}${phoneNumber}`);
-    twilio.verify.v2
+    await twilio.verify.v2
         .services(twilioServiceSid)
         .verifications.create({to: `${prefix}${phoneNumber}`, channel: "sms"})
         .then((verification) => {
