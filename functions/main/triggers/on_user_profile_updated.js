@@ -7,6 +7,39 @@ const mailjet = require("node-mailjet").apiConnect(
     process.env.MAIL_JET_SECRET_KEY,
 );
 
+const deleteAllPrimaryEmailVerificationDocument = async (userAccountId) => {
+    logger.info(`Function deleteAllPrimaryEmailVerificationDocument started`);
+    logger.info(`Checking if there are primary email verification document present that needs to be deleted`);
+
+    const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/`;
+    const primaryVerificationQuery = admin
+        .firestore()
+        .collection(primaryMailVerificationKeyPath)
+        .where("userAccountId", "==", userAccountId);
+
+    const primaryVerificationQueryResult =
+        await primaryVerificationQuery.get();
+
+    if (!primaryVerificationQueryResult.empty) {
+        logger.info(`Primary email verification document are present`);
+        logger.info(`Primary email document about to be deleted. Entering loop. Estimated loop turn is ${primaryVerificationQueryResult.size}`);
+        for (const snapshot of primaryVerificationQueryResult.docs) {
+            const snapshotId = snapshot.id;
+            try {
+                const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/${snapshotId}`;
+                const primaryMailVerificationRef = admin
+                    .firestore()
+                    .doc(primaryMailVerificationKeyPath);
+                await primaryMailVerificationRef.delete();
+                logger.info(`Primary email document deleted`);
+            } catch (error) {
+                logger.error(`Primary email verification document could not be deleted. Document id is ${snapshotId}. Error is ${error.message}`);
+            }
+        }
+        logger.info(`Exited from loop`);
+    }
+    logger.info(`Exited from function`);
+}
 
 exports.onUserProfileUpdated = onDocumentUpdated(
     "/USERS/PRIVATE-PROFILES/FILES/{userAccountId}",
@@ -127,44 +160,12 @@ exports.onUserProfileUpdated = onDocumentUpdated(
 
         }
 
-        const currentEmailVerifiedOn = afterUpdateData.emailVerifiedOn._nanoseconds;
-        const previousEmailVerifiedOn = beforeUpdateData.emailVerifiedOn._nanoseconds;
-
-        logger.info(`Before update email verified on ${previousEmailVerifiedOn}`);
-        logger.info(`After update email verified on ${currentEmailVerifiedOn}`);
-        if ((currentEmailVerifiedOn != null && currentEmailVerifiedOn !== previousEmailVerifiedOn) || (currentEmailVerifiedOn != null && previousEmailVerifiedOn == null)) {
-            logger.info(`Checking if there are primary email verification document present that needs to be deleted`);
-            const userAccountId = event.data.after.id;
-
-            const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/`;
-            const primaryVerificationQuery = admin
-                .firestore()
-                .collection(primaryMailVerificationKeyPath)
-                .where("userAccountId", "==", userAccountId);
-
-            const primaryVerificationQueryResult =
-                await primaryVerificationQuery.get();
-
-            if (!primaryVerificationQueryResult.empty) {
-                logger.info(`Primary email verification document are present`);
-                logger.info(`Primary email document about to be deleted. Entering loop. Estimated loop turn is ${primaryVerificationQueryResult.size}`);
-                for (const snapshot of primaryVerificationQueryResult.docs) {
-                    const snapshotId = snapshot.id;
-                    try {
-                        const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/${snapshotId}`;
-                        const primaryMailVerificationRef = admin
-                            .firestore()
-                            .doc(primaryMailVerificationKeyPath);
-                        await primaryMailVerificationRef.delete();
-                        logger.info(`Primary email document deleted`);
-                    } catch (error) {
-                        logger.error(`Primary email verification document could not be deleted. Document id is ${snapshotId}. Error is ${error.message}`);
-                    }
-                }
-                logger.info(`Exited from loop`);
-            }
-            return;
+        if (afterUpdateData.emailVerifiedOn != null && beforeUpdateData.emailVerifiedOn == null) {
+            await deleteAllPrimaryEmailVerificationDocument(userProfileSnapshot.after.id);
+        } else if (afterUpdateData.emailVerifiedOn != null && beforeUpdateData.emailVerifiedOn != null && afterUpdateData.emailVerifiedOn._nanoseconds !== beforeUpdateData.emailVerifiedOn._nanoseconds) {
+            await deleteAllPrimaryEmailVerificationDocument(userProfileSnapshot.after.id);
         }
 
+        logger.info(`Exiting from trigger`);
     },
 );
