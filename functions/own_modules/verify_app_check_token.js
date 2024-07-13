@@ -22,7 +22,7 @@ const verifyAppCheckToken = async (req, res, next) => {
         logger.info(`App check token verified`);
         return next();
     } catch (error) {
-        logger.error(`App check token could not be verified. Error is ${error.toString()}. Message is ${error.message}`);
+        logger.error(`App check token could not be verified. Error is ${error.toString()}`);
         return res.status(414).send("Unauthorized Device");
     }
 }
