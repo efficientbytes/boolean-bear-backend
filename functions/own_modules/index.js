@@ -6,3 +6,6 @@ exports.verifyOneTimeAppCheckToken = verifyOneTimeAppCheckToken;
 
 const verifyIdToken = require("./verify_id_token.js");
 exports.verifyIdToken = verifyIdToken;
+
+const otpRequestLimiter = require("./otp_request_limiter.js");
+exports.otpRequestLimiter = otpRequestLimiter;
