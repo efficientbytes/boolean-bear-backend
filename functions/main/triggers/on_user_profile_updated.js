@@ -1,5 +1,5 @@
 const admin = require("firebase-admin");
-const logger = require("firebase-functions/logger");
+const {logger} = require("firebase-functions");
 const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
 const {v4: uuidv4} = require("uuid");
 const mailjet = require("node-mailjet").apiConnect(
@@ -7,17 +7,51 @@ const mailjet = require("node-mailjet").apiConnect(
     process.env.MAIL_JET_SECRET_KEY,
 );
 
+const deleteAllPrimaryEmailVerificationDocument = async (userAccountId) => {
+    logger.info(`Function deleteAllPrimaryEmailVerificationDocument started`);
+    logger.info(`Checking if there are primary email verification document present that needs to be deleted`);
+
+    const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/`;
+    const primaryVerificationQuery = admin
+        .firestore()
+        .collection(primaryMailVerificationKeyPath)
+        .where("userAccountId", "==", userAccountId);
+
+    const primaryVerificationQueryResult =
+        await primaryVerificationQuery.get();
+
+    if (!primaryVerificationQueryResult.empty) {
+        logger.info(`Primary email verification document are present`);
+        logger.info(`Primary email document about to be deleted. Entering loop. Estimated loop turn is ${primaryVerificationQueryResult.size}`);
+        for (const snapshot of primaryVerificationQueryResult.docs) {
+            const snapshotId = snapshot.id;
+            try {
+                const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/${snapshotId}`;
+                const primaryMailVerificationRef = admin
+                    .firestore()
+                    .doc(primaryMailVerificationKeyPath);
+                await primaryMailVerificationRef.delete();
+                logger.info(`Primary email document deleted`);
+            } catch (error) {
+                logger.error(`Primary email verification document could not be deleted. Document id is ${snapshotId}. Error is ${error.message}`);
+            }
+        }
+        logger.info(`Exited from loop`);
+    }
+    logger.info(`Exited from function`);
+}
 
 exports.onUserProfileUpdated = onDocumentUpdated(
     "/USERS/PRIVATE-PROFILES/FILES/{userAccountId}",
     async (event) => {
 
-        logger.log(`trigger onUpdate||on-user-profile-updated.`);
+        logger.info(`Trigger onUpdate onUserProfileUpdated started`);
         const userProfileSnapshot = event.data;
         if (userProfileSnapshot == null) {
-            logger.error(`log||no data associated with the event.`);
+            logger.warn(`No data associated with the event`);
             return;
         }
+        logger.info(`User account id is ${userProfileSnapshot.after.id}`);
 
         const afterUpdateSnapshot = userProfileSnapshot.after;
         const beforeUpdateSnapshot = userProfileSnapshot.before;
@@ -25,28 +59,31 @@ exports.onUserProfileUpdated = onDocumentUpdated(
         const afterUpdateData = afterUpdateSnapshot.data();
         const beforeUpdateData = beforeUpdateSnapshot.data();
 
+        logger.info(`Before update email address is ${beforeUpdateData.emailAddress}`);
+        logger.info(`After update email address is ${afterUpdateData.emailAddress}`);
         if (
             afterUpdateData.emailAddress != null &&
             beforeUpdateData.emailAddress == null
         ) {
+            logger.info(`After update email is not null and before update email is null`);
+            //first time when the user profile is created automatically during sign in as new user.
+            // The custom claim has to be modified to - { email verified : false }
+
             const customClaim = {
                 emailVerified: false,
             };
 
             const userAccountId = event.data.after.id;
-            logger.log(
-                `log||user account id is ${userAccountId} and email has been updated for first time.`,
-            );
 
+            logger.info(`Custom claim about to be modified.`);
             const customClaimUpdateResult = await admin
                 .auth()
                 .setCustomUserClaims(userAccountId, customClaim)
                 .then(() => {
-                    logger.log(
-                        `log||user account id is ${userAccountId} and custom claim for email verified has been set to false.`,
-                    );
+                    logger.info(`Custom claim modified to {email verified : false}`);
                     return true;
-                }).catch(() => {
+                }).catch((error) => {
+                    logger.error(`Custom claim could not be modified. Error is ${error.message}`);
                     return false;
                 });
 
@@ -56,8 +93,10 @@ exports.onUserProfileUpdated = onDocumentUpdated(
             const updateResult = await admin.firestore().doc(userProfilePath).update({
                 lastUpdatedOn: admin.firestore.FieldValue.serverTimestamp(),
             }).then(() => {
+                logger.info(`Field lastUpdatedOn updated`);
                 return true;
-            }).catch(() => {
+            }).catch((error) => {
+                logger.error(`Field lastUpdatedOn could not be updated. Error is ${error.message}`);
                 return false;
             });
 
@@ -65,6 +104,8 @@ exports.onUserProfileUpdated = onDocumentUpdated(
 
             const emailAddress = afterUpdateData.emailAddress;
             const firstName = afterUpdateData.firstName;
+
+            logger.info(`Verification email to be sent to  email address ${emailAddress}. First name is ${firstName}`);
 
             const verificationId = uuidv4();
             const updatedPrimaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/${verificationId}`;
@@ -111,58 +152,20 @@ exports.onUserProfileUpdated = onDocumentUpdated(
                             Variables: templateData,
                         },
                     ],
+                }).then(result => {
+                    logger.info(`Verification email sent`);
                 }).catch((error) => {
-                    logger.error(`send-verification-link-to-primary-mail||failed||trigger||error is ${error.message}`);
+                    logger.error(`Verification email could not be sent. Error is ${error.message}`);
                 });
 
         }
 
-        const currentEmailVerifiedOn = afterUpdateData.emailVerifiedOn._nanoseconds;
-        const previousEmailVerifiedOn = beforeUpdateData.emailVerifiedOn._nanoseconds;
-
-        if (currentEmailVerifiedOn != null && currentEmailVerifiedOn !== previousEmailVerifiedOn) {
-
-            const userAccountId = event.data.after.id;
-
-            const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/`;
-            const primaryVerificationQuery = admin
-                .firestore()
-                .collection(primaryMailVerificationKeyPath)
-                .where("userAccountId", "==", userAccountId);
-
-            const primaryVerificationQueryResult =
-                await primaryVerificationQuery.get();
-
-            if (!primaryVerificationQueryResult.empty) {
-                logger.log(
-                    `log||there are ${primaryVerificationQueryResult.size} verification credentials request created for user with user account id ${userAccountId}`,
-                );
-                logger.log(`log||deleting verification credentials...`);
-                for (const snapshot of primaryVerificationQueryResult.docs) {
-                    const snapshotId = snapshot.id;
-                    try {
-                        const primaryMailVerificationKeyPath = `/USERS/VERIFICATIONS/PRIMARY-MAILS/${snapshotId}`;
-                        const primaryMailVerificationRef = admin
-                            .firestore()
-                            .doc(primaryMailVerificationKeyPath);
-                        await primaryMailVerificationRef.delete();
-                    } catch (error) {
-                        logger.error(
-                            `log||failed to delete document id ${snapshotId}. Error ${error.message}`,
-                        );
-                    }
-                }
-                logger.log(
-                    `log||verification credentials deletion completed for user with user account id ${userAccountId}`,
-                );
-                const updatedQueryResult = await primaryVerificationQuery.get();
-                const updatedSize = updatedQueryResult.size;
-                logger.log(
-                    `log||verification credentials deletion completed for user with user account id ${userAccountId}. Documents present after deletion ${updatedSize}`,
-                );
-            }
-            return;
+        if (afterUpdateData.emailVerifiedOn != null && beforeUpdateData.emailVerifiedOn == null) {
+            await deleteAllPrimaryEmailVerificationDocument(userProfileSnapshot.after.id);
+        } else if (afterUpdateData.emailVerifiedOn != null && beforeUpdateData.emailVerifiedOn != null && afterUpdateData.emailVerifiedOn._nanoseconds !== beforeUpdateData.emailVerifiedOn._nanoseconds) {
+            await deleteAllPrimaryEmailVerificationDocument(userProfileSnapshot.after.id);
         }
 
+        logger.info(`Exiting from trigger`);
     },
 );

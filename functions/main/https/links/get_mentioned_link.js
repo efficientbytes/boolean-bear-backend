@@ -19,6 +19,12 @@ router.get("/:linkId", verifyAppCheckToken, verifyIdToken, async (request, respo
         return;
     }
 
+    if (mentionedLinkId.trim() === "") {
+        responseBody.message = `Invalid mentioned link id`;
+        response.status(400).send(responseBody);
+        return;
+    }
+
     const mentionedLinkPath = `/ASSETS/LINKS/FILES/${mentionedLinkId}`;
     const mentionedLinkRef = admin.firestore().doc(mentionedLinkPath);
     const mentionedLinkSnapshot = await mentionedLinkRef.get();

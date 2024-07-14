@@ -2,16 +2,16 @@ const admin = require("firebase-admin");
 const {logger} = require("firebase-functions");
 
 const verifyIdToken = async (req, res, next) => {
-
+    logger.info(`Firebase ID token verification started`);
     const authorization = req.header("authorization");
 
     if (!authorization) {
-        logger.info(`Id token unauthorized access. No token provided.`);
+        logger.warn(`Firebase ID token not supplied`);
         return res.status(401).send(`Authentication Required`);
     }
 
     if (!authorization.startsWith("Bearer ")) {
-        logger.info(`Id token unauthorized access. No token provided.`);
+        logger.warn(`Firebase ID token not supplied`);
         return res.status(401).send(`Authentication Required`);
     }
 
@@ -20,22 +20,21 @@ const verifyIdToken = async (req, res, next) => {
         const tokenData = await admin.auth().verifyIdToken(idToken);
 
         if (tokenData == null) {
-            logger.info(`Id token unauthorized access. Authentication failed.`);
+            logger.warn(`Firebase ID token data is null`);
             return res.status(401).send("Authentication Failed");
         }
 
         const userAccountId = tokenData.uid;
 
         if (userAccountId == null) {
-            logger.info(`Id token unauthorized access. User account could not be found.`);
+            logger.warn(`Firebase ID token user account id is null`);
             return res.status(401).send("Authentication Failed");
         }
-
-        //continue to next , pass the userAccountId
+        logger.info(`Firebase ID token is verified. User account id is ${userAccountId}`);
         req.userAccountId = userAccountId;
         next();
     } catch (error) {
-        logger.info(`Id token unauthorized access. Error is ${error.toString()}.`);
+        logger.error(`Firebase ID token could not be verified. Error is ${error.toString()}. Message is ${error.message}`);
         return res.status(401).send("Authentication Failed");
     }
 
