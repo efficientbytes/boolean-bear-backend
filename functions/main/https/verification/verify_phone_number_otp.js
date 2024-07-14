@@ -8,6 +8,7 @@ const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
 const twilio = require("twilio")(twilioAccountSid, twilioAuthToken);
 const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 const admin = require("firebase-admin");
+const {otpRequestLimiter} = require("own_modules/otp_request_limiter.js");
 
 class User {
     constructor(username, phoneNumber, otp) {
@@ -17,7 +18,7 @@ class User {
     }
 }
 
-router.post("/", verifyAppCheckToken, async (request, response) => {
+router.post("/", verifyAppCheckToken, otpRequestLimiter, async (request, response) => {
     logger.info(`API verify_phone_number_otp started`);
     const phoneNumber = request.body.phoneNumber || null;
     logger.info(`Phone number is ${phoneNumber}`);
@@ -34,19 +35,6 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
     responseBody.data = {
         prefix: null,
         phoneNumber: null
-    }
-
-    if (phoneNumber == null) {
-        logger.warn(`Phone number not provided`);
-        responseBody.message = `Phone number is not provided`;
-        response.status(400).send(responseBody);
-        return;
-    }
-
-    if (prefix == null) {
-        logger.warn(`Prefix not provided`);
-        response.status(400).send(responseBody);
-        return;
     }
 
     if (otp == null) {
@@ -88,7 +76,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
     const verifyLogPath = `/USERS/VERIFICATIONS/OTP-REQUESTS/${completePhoneNumber}`;
     const verifyLogRef = admin.firestore().doc(verifyLogPath);
 
-    const requestedAt = admin.firestore.FieldValue.serverTimestamp();
+    const requestedAt = Date.now();
     await verifyLogRef.update({
         verificationRequests: admin.firestore.FieldValue.arrayUnion(requestedAt),
     });
@@ -127,7 +115,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
                 //check if the temp log size is == 3
                 const verifyLogQuery = await verifyLogRef.get();
                 const logData = verifyLogQuery.data();
-                const temporaryLogs = logData.temporaryLog || [];
+                const temporaryLogs = logData.temporaryLogs || [];
 
                 if (temporaryLogs.length === 3) {
                     logger.warn(`User has reached 3 failed OTP verification`);
@@ -169,7 +157,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
             responseBody.message = `OTP verification failed. Error code ${error.code}`;
             responseBody.data.phoneNumber = phoneNumber;
             responseBody.data.prefix = prefix;
-            response.status(503).send(responseBody);
+            response.status(500).send(responseBody);
         });
 });
 

@@ -60,7 +60,7 @@ const sendOtp = async (prefix, phoneNumber, response, responseBody) => {
             responseBody.data.phoneNumberData.phoneNumber = phoneNumber;
             responseBody.data.mode = 0;
             responseBody.message = `Verification error identifier ${error.code}`;
-            response.status(503).send(responseBody);
+            response.status(500).send(responseBody);
         });
 
 }

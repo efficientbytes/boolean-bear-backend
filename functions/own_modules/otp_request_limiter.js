@@ -72,7 +72,7 @@ const otpRequestLimiter = async (req, res, next) => {
     }
 
     //check if the temp field array is empty or not
-    const temporaryLogs = logData.temporaryLog || [];
+    const temporaryLogs = logData.temporaryLogs || [];
 
     if (temporaryLogs.length === 0) {
         logger.info(`User does not have any failed attempts yet`);
@@ -83,16 +83,16 @@ const otpRequestLimiter = async (req, res, next) => {
     if (temporaryLogs.length > 0 && temporaryLogs < 3) {
         //check if the current request is within 24 hours of the 1st failed attempt
         const millisecondsIn24Hours = 24 * 60 * 60 * 1000;
-        const currentTimeInMillis = new Date();
+        const currentTimeInMillis = Date.now();
 
-        const initialFailInMillis = temporaryLogs[0].toDate();
+        const initialFailInMillis = temporaryLogs[0];
         const timeDiff = currentTimeInMillis - initialFailInMillis;
 
         if (timeDiff > millisecondsIn24Hours) {
             logger.info(`User has passed the 24 hour waiting time`);
             //clear the temp field
             await verifyLogRef.update({
-                temp: [],
+                temporaryLogs: [],
             }).then(() => {
                 logger.info(`Cleared the temp field`);
             }).catch((error) => {
@@ -107,9 +107,9 @@ const otpRequestLimiter = async (req, res, next) => {
     if (temporaryLogs.length === 3) {
         //check if the current attempt time is within 72 hours of the 3rd failed attempt
         const millisecondsIn72Hours = 72 * 60 * 60 * 1000;
-        const currentTimeInMillis = new Date();
+        const currentTimeInMillis = Date.now();
 
-        const thirdFailInMillis = temporaryLogs[2].toDate();
+        const thirdFailInMillis = temporaryLogs[2];
         const timeDiff = currentTimeInMillis - thirdFailInMillis;
 
         if (timeDiff < millisecondsIn72Hours) {
@@ -121,6 +121,8 @@ const otpRequestLimiter = async (req, res, next) => {
         }
         return next();
     }
+
+    return next();
 
 }
 

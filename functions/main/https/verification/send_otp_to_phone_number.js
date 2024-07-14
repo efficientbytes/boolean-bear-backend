@@ -63,7 +63,7 @@ router.post("/", verifyAppCheckToken, otpRequestLimiter, async (request, respons
             if (verification.status === "pending") {
                 //update the otp log otp request field
                 await verifyLogRef.update({
-                    otpRequests: admin.firestore.FieldValue.arrayUnion(admin.firestore.FieldValue.serverTimestamp()),
+                    otpRequests: admin.firestore.FieldValue.arrayUnion(Date.now()),
                 });
 
                 logger.info(`OTP sent to ${prefix}${phoneNumber}`);
@@ -78,7 +78,7 @@ router.post("/", verifyAppCheckToken, otpRequestLimiter, async (request, respons
         .catch((error) => {
             logger.error(`OTP could not be sent to ${prefix}${phoneNumber}. Error is ${error.message}. Error code is ${error.code}`);
             responseBody.message = `OTP request failed. Error code ${error.code}`;
-            response.status(503).send(responseBody);
+            response.status(500).send(responseBody);
         });
 });
 
