@@ -41,15 +41,15 @@ router.post("/", verifyAppCheckToken, otpRequestLimiter, async (request, respons
 
     const testUserList = [anubhav, dad, mom];
 
-    for (let user of testUserList) {
-        if (user.phoneNumber === phoneNumber) {
-            responseBody.message = `OTP has been sent to ${prefix}${phoneNumber}`;
-            responseBody.data.prefix = prefix;
-            responseBody.data.phoneNumber = phoneNumber;
-            response.status(200).send(responseBody);
-            return;
-        }
-    }
+    /* for (let user of testUserList) {
+         if (user.phoneNumber === phoneNumber) {
+             responseBody.message = `OTP has been sent to ${prefix}${phoneNumber}`;
+             responseBody.data.prefix = prefix;
+             responseBody.data.phoneNumber = phoneNumber;
+             response.status(200).send(responseBody);
+             return;
+         }
+     }*/
 
     const completePhoneNumber = prefix + phoneNumber;
     const verifyLogPath = `/USERS/VERIFICATIONS/OTP-REQUESTS/${completePhoneNumber}`;

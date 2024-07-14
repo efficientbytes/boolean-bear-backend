@@ -61,21 +61,21 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
 
     const testUserList = [anubhav, dad, mom];
 
-    for (let user of testUserList) {
-        if (user.phoneNumber === phoneNumber && user.otp === otp) {
-            responseBody.message = `Verification successful`;
-            responseBody.data.phoneNumber = phoneNumber;
-            responseBody.data.prefix = prefix;
-            response.status(200).send(responseBody);
-            return;
-        } else if (user.phoneNumber === phoneNumber && user.otp !== otp) {
-            responseBody.message = `Verification failed`;
-            responseBody.data.phoneNumber = phoneNumber;
-            responseBody.data.prefix = prefix;
-            response.status(400).send(responseBody);
-            return;
-        }
-    }
+    /* for (let user of testUserList) {
+         if (user.phoneNumber === phoneNumber && user.otp === otp) {
+             responseBody.message = `Verification successful`;
+             responseBody.data.phoneNumber = phoneNumber;
+             responseBody.data.prefix = prefix;
+             response.status(200).send(responseBody);
+             return;
+         } else if (user.phoneNumber === phoneNumber && user.otp !== otp) {
+             responseBody.message = `Verification failed`;
+             responseBody.data.phoneNumber = phoneNumber;
+             responseBody.data.prefix = prefix;
+             response.status(400).send(responseBody);
+             return;
+         }
+     }*/
 
     let ipAddress = request.ip;
 
