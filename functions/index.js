@@ -115,6 +115,11 @@ app.use("/account/delete/", deleteAccountAppLink);
 //app link for deep link
 const appLinks = require("./main/https/app_link/app_link_verifications");
 app.use("/.well-known/assetlinks.json", appLinks);
+const adsText = require("./main/https/app_link/ads_text.js");
+app.use("/app-ads.txt", adsText);
+/*const landing = require("./main/https/app_link/landing");
+app.use("/", landing);*/
+
 
 //admin
 const uploadVideo = require("./main/https/videos/upload_video");

@@ -122,7 +122,15 @@ const otpRequestLimiter = async (req, res, next) => {
         return next();
     }
 
-    return next();
+    logger.info(`User has crossed 3 previous failed OTP attempts`);
+    if (temporaryLogs.length > 3 && temporaryLogs.length <= 5) {
+        logger.info(`OTP about to be sent to ${prefix}${phoneNumber}`);
+        return next();
+    } else {
+        logger.warn(`Phone number blocked`);
+        responseBody.message = `Due to suspicious activity, your requests have been permanently blocked.`;
+        return res.status(400).send(responseBody);
+    }
 
 }
 
