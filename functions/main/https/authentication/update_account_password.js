@@ -64,9 +64,37 @@ router.post("/", verifyAppCheckToken, verifyIdToken, async (request, response) =
 
     if (!passwordQueryResult.exists) {
         logger.warn(`Password document does not exists`);
-        responseBody.message = `Identity could not be verified.`;
-        response.status(400).send(responseBody);
-        return
+        logger.info(`Password about to be created`);
+
+        // Proceed with hashing and save it in database
+        try {
+            logger.info(`Password about to be hashed`);
+            const saltRounds = 12
+            const salt = await bcrypt.genSalt(saltRounds);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            logger.info(`Password has been hashed`);
+
+            const time = admin.firestore.FieldValue.serverTimestamp();
+            return await passwordRef.set({
+                hash: hashedPassword,
+                createdOn: time,
+                updatedOn: time,
+            }).then(result => {
+                logger.info(`Password created`);
+                responseBody.message = `Password has been successfully set and stored securely.`;
+                return response.status(200).send(responseBody);
+            }).catch(error => {
+                logger.error(`Password could not be created. Error is ${error.message}`);
+                responseBody.message = error.message;
+                return response.status(500).send(responseBody);
+            });
+
+        } catch (error) {
+            logger.error(`Password could not be created. Error is ${error.message}`);
+            responseBody.message = `Failed to accept the password.`;
+            return response.status(500).send(responseBody);
+        }
+
     }
 
     const passwordData = passwordQueryResult.data();
@@ -79,7 +107,7 @@ router.post("/", verifyAppCheckToken, verifyIdToken, async (request, response) =
             logger.warn(`New password same as old password`);
             // New password cannot be same as the old password
             responseBody.message = `New password cannot be same as the old password`;
-            response.status(400).send(responseBody);
+            return response.status(400).send(responseBody);
         } else {
             // Proceed with hashing and save it in database
             try {
@@ -90,30 +118,30 @@ router.post("/", verifyAppCheckToken, verifyIdToken, async (request, response) =
                 logger.info(`Password has been hashed`);
 
                 const time = admin.firestore.FieldValue.serverTimestamp();
-                await passwordRef.update({
+                return await passwordRef.update({
                     hash: hashedPassword,
                     updatedOn: time,
                 }).then(result => {
                     logger.info(`Password updated`);
                     responseBody.message = `Password has been successfully updated.`;
-                    response.status(200).send(responseBody);
+                    return response.status(200).send(responseBody);
                 }).catch(error => {
                     logger.error(`Password could not be updated. Error is ${error.message}`);
                     responseBody.message = error.message;
-                    response.status(500).send(responseBody);
+                    return response.status(500).send(responseBody);
                 });
 
             } catch (error) {
                 logger.error(`Password could not updated. Error is ${error.message}`);
                 responseBody.message = `Failed to accept the password.`;
-                response.status(500).send(responseBody);
+                return response.status(500).send(responseBody);
             }
 
         }
     } catch (error) {
         logger.error(`Password hash could not be compared. Error is ${error.message}`);
         responseBody.message = `Failed to accept the password.`;
-        response.status(500).send(responseBody);
+        return response.status(500).send(responseBody);
     }
 
 });

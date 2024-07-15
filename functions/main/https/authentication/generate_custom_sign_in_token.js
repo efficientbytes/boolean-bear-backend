@@ -95,7 +95,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
             .then(() => {
                 logger.info(`User profile document created`);
                 logger.info(`Custom token about to be generated`);
-                admin.auth().createCustomToken(userAccountId)
+                return admin.auth().createCustomToken(userAccountId)
             })
             .then(async (customToken) => {
                 //create a single device login document
@@ -152,6 +152,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
                 responseBody.data.singleDeviceLogin.deviceId = singleDeviceLoginData.deviceId;
                 responseBody.data.singleDeviceLogin.createdOn = singleDeviceLoginData.createdOn._seconds;
                 responseBody.message = "Signing in new user";
+                logger.info(`Sign in token generated. Sign in token is ${responseBody.toString()}`);
                 response.status(200).send(responseBody);
             });
     } else {
@@ -232,6 +233,7 @@ router.post("/", verifyAppCheckToken, async (request, response) => {
         responseBody.data.singleDeviceLogin.deviceId = singleDeviceLoginData.deviceId;
         responseBody.data.singleDeviceLogin.createdOn = singleDeviceLoginData.createdOn._seconds;
         responseBody.message = "Signing in new user";
+        logger.info(`Sign in token generated. Sign in token is ${responseBody.toString()}`);
         response.status(200).send(responseBody);
     }
 });
