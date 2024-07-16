@@ -10,14 +10,31 @@ const twilio = require("twilio")(twilioAccountSid, twilioAuthToken);
 const {verifyAppCheckToken} = require("own_modules/verify_app_check_token.js");
 
 class User {
-    constructor(username, phoneNumber, otp) {
+    constructor(username, phoneNumber, otp, prefix = "+91") {
         this.username = username;
         this.phoneNumber = phoneNumber;
         this.otp = otp;
+        this.prefix = prefix;
     }
 }
 
 const sendOTP = async (prefix, phoneNumber, response, responseBody) => {
+
+    const anubhav = new User("Anubhav", "", "9150472796", process.env.ANUBHAV);
+    const dad = new User("Dad", "8056027454", process.env.DAD);
+    const mom = new User("Mom", "9600165087", process.env.MOM);
+
+    const testUserList = [anubhav, dad, mom];
+
+    for (let user of testUserList) {
+        if (user.phoneNumber === phoneNumber && user.prefix === prefix) {
+            responseBody.message = `OTP has been sent to ${prefix}${phoneNumber}`;
+            responseBody.data.prefix = prefix;
+            responseBody.data.phoneNumber = phoneNumber;
+            response.status(200).send(responseBody);
+            return;
+        }
+    }
 
     const completePhoneNumber = prefix + phoneNumber;
     const verifyLogPath = `/USERS/VERIFICATIONS/OTP-REQUESTS/${completePhoneNumber}`;

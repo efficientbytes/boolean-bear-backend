@@ -117,8 +117,8 @@ const appLinks = require("./main/https/app_link/app_link_verifications");
 app.use("/.well-known/assetlinks.json", appLinks);
 const adsText = require("./main/https/app_link/ads_text.js");
 app.use("/app-ads.txt", adsText);
-/*const landing = require("./main/https/app_link/landing");
-app.use("/", landing);*/
+const landing = require("./main/https/app_link/landing");
+app.use("/", landing);
 
 
 //admin
@@ -133,9 +133,11 @@ app.use("/admin/reels/templates/create", createReelTemplates);
 const createMentionedLinkTemplates = require("./main/https/links/create_mentioned_link_templates");
 app.use("/admin/mentioned-links/templates/create", createMentionedLinkTemplates);
 
+/*
 app.use((req, res, next) => {
     res.redirect('https://play.google.com/store/apps/details?id=app.efficientbytes.booleanbear');
 });
+*/
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);

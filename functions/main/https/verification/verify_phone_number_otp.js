@@ -11,10 +11,11 @@ const admin = require("firebase-admin");
 const {otpRequestLimiter} = require("own_modules/otp_request_limiter.js");
 
 class User {
-    constructor(username, phoneNumber, otp) {
+    constructor(username, phoneNumber, otp, prefix = "+91") {
         this.username = username;
         this.phoneNumber = phoneNumber;
         this.otp = otp;
+        this.prefix = prefix;
     }
 }
 
@@ -49,21 +50,21 @@ router.post("/", verifyAppCheckToken, otpRequestLimiter, async (request, respons
 
     const testUserList = [anubhav, dad, mom];
 
-    /* for (let user of testUserList) {
-         if (user.phoneNumber === phoneNumber && user.otp === otp) {
-             responseBody.message = `Verification successful`;
-             responseBody.data.phoneNumber = phoneNumber;
-             responseBody.data.prefix = prefix;
-             response.status(200).send(responseBody);
-             return;
-         } else if (user.phoneNumber === phoneNumber && user.otp !== otp) {
-             responseBody.message = `Verification failed`;
-             responseBody.data.phoneNumber = phoneNumber;
-             responseBody.data.prefix = prefix;
-             response.status(400).send(responseBody);
-             return;
-         }
-     }*/
+    for (let user of testUserList) {
+        if (user.phoneNumber === phoneNumber && user.prefix === prefix && user.otp === otp) {
+            responseBody.message = `Verification successful`;
+            responseBody.data.phoneNumber = phoneNumber;
+            responseBody.data.prefix = prefix;
+            response.status(200).send(responseBody);
+            return;
+        } else if (user.phoneNumber === phoneNumber && user.otp !== otp) {
+            responseBody.message = `Verification failed`;
+            responseBody.data.phoneNumber = phoneNumber;
+            responseBody.data.prefix = prefix;
+            response.status(400).send(responseBody);
+            return;
+        }
+    }
 
     let ipAddress = request.ip;
 
