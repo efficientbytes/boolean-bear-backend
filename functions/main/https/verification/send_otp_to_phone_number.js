@@ -71,7 +71,7 @@ router.post("/", verifyAppCheckToken, otpRequestLimiter, async (request, respons
                 responseBody.message = `OTP has been sent to ${prefix}${phoneNumber}`;
                 responseBody.data.prefix = prefix;
                 responseBody.data.phoneNumber = phoneNumber;
-                response.status(200).send(responseBody);
+                return response.status(200).send(responseBody);
             } else {
                 logger.warn(`OTP status for ${prefix}${phoneNumber} is ${verification.status}`);
                 responseBody.message = `OTP could not be sent. Status is ${verification.status}`;
