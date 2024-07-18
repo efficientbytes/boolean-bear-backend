@@ -110,11 +110,16 @@ app.use("/user/notifications/token/upload", uploadFCMToken);
 const deleteFCMToken = require("./main/https/user_private_profile/delete_fcm_token");
 app.use("/user/notification/token/delete", deleteFCMToken);
 const deleteAccountAppLink = require("./main/https/app_link/delete_account_app_link");
-app.use("/account/delete/", deleteAccountAppLink);
+app.use("/user/account/delete-procedure", deleteAccountAppLink);
 
 //app link for deep link
 const appLinks = require("./main/https/app_link/app_link_verifications");
 app.use("/.well-known/assetlinks.json", appLinks);
+const adsText = require("./main/https/app_link/ads_text.js");
+app.use("/app-ads.txt", adsText);
+const landing = require("./main/https/app_link/landing");
+app.use("/", landing);
+
 
 //admin
 const uploadVideo = require("./main/https/videos/upload_video");
@@ -128,9 +133,11 @@ app.use("/admin/reels/templates/create", createReelTemplates);
 const createMentionedLinkTemplates = require("./main/https/links/create_mentioned_link_templates");
 app.use("/admin/mentioned-links/templates/create", createMentionedLinkTemplates);
 
+/*
 app.use((req, res, next) => {
     res.redirect('https://play.google.com/store/apps/details?id=app.efficientbytes.booleanbear');
 });
+*/
 
 setGlobalOptions({maxInstances: 10});
 exports.booleanbear = onRequest(app);

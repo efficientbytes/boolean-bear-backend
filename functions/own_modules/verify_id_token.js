@@ -32,7 +32,7 @@ const verifyIdToken = async (req, res, next) => {
         }
         logger.info(`Firebase ID token is verified. User account id is ${userAccountId}`);
         req.userAccountId = userAccountId;
-        next();
+        return next();
     } catch (error) {
         logger.error(`Firebase ID token could not be verified. Error is ${error.toString()}. Message is ${error.message}`);
         return res.status(401).send("Authentication Failed");

@@ -23,6 +23,10 @@ const verifyAppCheckToken = async (req, res, next) => {
         return next();
     } catch (error) {
         logger.error(`App check token could not be verified. Error is ${error.toString()}`);
+        const expiredMessage = "The provided App Check token has expired";
+        if (error.toString().includes(expiredMessage)) {
+            return res.status(415).send("Unauthorized Device");
+        }
         return res.status(414).send("Unauthorized Device");
     }
 }
