@@ -80,7 +80,7 @@ const otpRequestLimiter = async (req, res, next) => {
     }
 
     logger.info(`User has ${temporaryLogs.length} failed attempts`);
-    if (temporaryLogs.length > 0 && temporaryLogs < 3) {
+    if (temporaryLogs.length > 0 && temporaryLogs.length < 3) {
         //check if the current request is within 24 hours of the 1st failed attempt
         const millisecondsIn24Hours = 24 * 60 * 60 * 1000;
         const currentTimeInMillis = Date.now();
@@ -131,7 +131,6 @@ const otpRequestLimiter = async (req, res, next) => {
         responseBody.message = `Due to suspicious activity, your requests have been permanently blocked.`;
         return res.status(400).send(responseBody);
     }
-
 }
 
 module.exports = {

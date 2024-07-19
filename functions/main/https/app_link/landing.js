@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    res.status(200).send(`Welcome To Boolean Bear`);
+    return res.status(200).send(`Welcome To Boolean Bear`);
 })
 
 module.exports = router;
