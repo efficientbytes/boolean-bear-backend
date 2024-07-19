@@ -68,6 +68,9 @@ const getReelDetails = require("./main/https/reels/get_reel_details");
 app.use("/reels", getReelDetails);
 const getReelPlayLink = require("./main/https/reels/get_reel_play_link");
 app.use("/reels", getReelPlayLink);
+const getReelVideoId = require("./main/https/reels/get_reel_video_id");
+app.use("/reels", getReelVideoId);
+
 
 //course related
 const getCourseBundle = require("./main/https/courses/get_course_bundle");
