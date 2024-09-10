@@ -102,35 +102,22 @@ function generateSignedUrl(
 }
 
 
-router.get("/:reelId/play-link", verifyAppCheckToken, verifyIdToken, async (request, response) => {
+router.get("/:videoId/play-link", verifyAppCheckToken, verifyIdToken, async (request, response) => {
     logger.info(`API get_reel_play_link started`);
-    const reelId = request.params.reelId || null;
-    logger.info(`Reel id is ${reelId}`);
+    const videoId = request.params.videoId || null;
+    logger.info(`Reel id is ${videoId}`);
     const responseBody = {
         data: null,
         message: null
     }
 
-    if (reelId == null) {
+    if (videoId == null) {
         logger.warn(`Reel id is not supplied`);
         responseBody.message = `Reel id is not provided.`;
         response.status(400).send(responseBody);
         return;
     }
 
-    const reelPath = `/ASSETS/REELS/FILES/${reelId}`;
-    const reelRef = admin.firestore().doc(reelPath);
-    const reelQueryResult = await reelRef.get();
-
-    if (!reelQueryResult.exists) {
-        logger.warn(`Reel document does not exists`);
-        responseBody.message = `Reel does not exists.`;
-        response.status(404).send(responseBody);
-        return;
-    }
-
-    const reelData = reelQueryResult.data();
-    const videoId = reelData.videoId;
     logger.info(`Video id is ${videoId}`);
 
     try {
